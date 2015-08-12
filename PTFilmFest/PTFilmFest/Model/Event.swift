@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-enum eventType:Int16 {
+enum eventType:Int {
     case Main = 0, Sub, Special
 }
 
@@ -19,9 +19,9 @@ class Event: NSManagedObject {
     @NSManaged var title: String
     @NSManaged var bodyText: String
     @NSManaged var director: String
-    @NSManaged var imageName: String
     @NSManaged var name: String
-    @NSManaged var type: Int16
+    @NSManaged var type: Int
+    @NSManaged var mainFeature: String
     @NSManaged var webSite: String
     @NSManaged var scheduleItem: NSSet
 

@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  PTFilmFest
 //
-//  Created by Steve Schauer on 6/29/15.
+//  Created by Steve Schauer on 8/7/15.
 //  Copyright (c) 2015 Steve Schauer. All rights reserved.
 //
 
@@ -17,13 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        
-        loadDatabase()
-        
-        let device = UIDevice()
-        let screenRect = UIScreen.mainScreen().bounds.size.width
-        println(screenRect)
-        
         let splitViewController = self.window!.rootViewController as! UISplitViewController
         let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
         navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
@@ -32,6 +25,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
         let controller = masterNavigationController.topViewController as! MasterViewController
         controller.managedObjectContext = self.managedObjectContext
+        
+        // one time data load
+        var fetchRequest = NSFetchRequest(entityName: "Venue")
+        let fetchResults = self.managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Venue]
+        if fetchResults!.count == 0 {
+            loadDataFromJSON()
+        }
         return true
     }
 
@@ -136,118 +136,93 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
     
     // MARK: database creation
-    func loadDatabase () {
+    func eventForName(name:String) -> Event {
         let context = self.managedObjectContext!;
-        context.undoManager = nil;
         
+        var fetchRequest = NSFetchRequest(entityName: "Event")
+        fetchRequest.predicate = NSPredicate(format: "name CONTAINS[c] %@", name)
+
+        let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [Event]
+        return fetchResults![0];
+    }
+    
+    func venueForName(name:String) -> Venue {
+        let context = self.managedObjectContext!;
+        
+        var fetchRequest = NSFetchRequest(entityName: "Venue")
+        fetchRequest.predicate = NSPredicate(format: "name CONTAINS[c] %@", name)
+        
+        let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [Venue]
+        return fetchResults![0];
+    }
+    
+    func loadDataFromJSON() {
+        
+        let context = self.managedObjectContext!;
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
-        
-        // MARK: Venues
-        var venueRose = NSEntityDescription.insertNewObjectForEntityForName("Venue", inManagedObjectContext: context) as! Venue
-        venueRose.name = "rose"
-        venueRose.title = "Rose Theatre"
-        venueRose.address = "235 Taylor St."
-        venueRose.webSite = "http://www.rosetheatre.com"
-        venueRose.imageName = ""
-        venueRose.latitude = 48.114840
-        venueRose.longitude = -122.757035
-        venueRose.bodyText = "Port Townsend enjoyed a lively theater scene before the dawn of the twentieth century.  The Palace Theatre, The Standard, and the Learned Opera House showcased local talent and traveling vaudeville troupes 'of the highest caliber.'  The Rose, which opened around the corner on Water Street in 1907, continued this tradition but added a recent invention to its repertoire: moving pictures.  In December 1908 the Rose moved to its current location in Taylor Street.\n\nTom Mix, Mary Pickford, Douglas Fairbanks, Lillian Gish, and countless other Hollywood stars graced the Rose Theatre's silver screen for more than fifty years before it closed its doors November 8, 1958 with the potboiler High School Confidential.  The Rose reopened July 11, 1992, and with the addition of the Rosebud Cinema three years later, has become one of the most treasured features of Port Townsend's National Historic District.\n\nSo, experience a film at the Rose, where the popcorn is fresh, the butter is real, the sound is superb, and every show is personally introduced by our host."
-        
-        var venueRosebud = NSEntityDescription.insertNewObjectForEntityForName("Venue", inManagedObjectContext: context) as! Venue
-        venueRosebud.name = "rosebud"
-        venueRosebud.title = "Rosebud Theatre"
-        venueRosebud.address = "235 Taylor St."
-        venueRosebud.webSite = "http://www.rosetheatre.com"
-        venueRosebud.imageName = ""
-        venueRosebud.latitude = 48.114840
-        venueRosebud.longitude = -122.757035
-        venueRosebud.bodyText = "Port Townsend enjoyed a lively theater scene before the dawn of the twentieth century.  The Palace Theatre, The Standard, and the Learned Opera House showcased local talent and traveling vaudeville troupes 'of the highest caliber.'  The Rose, which opened around the corner on Water Street in 1907, continued this tradition but added a recent invention to its repertoire: moving pictures.  In December 1908 the Rose moved to its current location in Taylor Street.\n\nTom Mix, Mary Pickford, Douglas Fairbanks, Lillian Gish, and countless other Hollywood stars graced the Rose Theatre's silver screen for more than fifty years before it closed its doors November 8, 1958 with the potboiler High School Confidential.  The Rose reopened July 11, 1992, and with the addition of the Rosebud Cinema three years later, has become one of the most treasured features of Port Townsend's National Historic District.\n\nSo, experience a film at the Rose, where the popcorn is fresh, the butter is real, the sound is superb, and every show is personally introduced by our host."
-        
-        var venueTaylor = NSEntityDescription.insertNewObjectForEntityForName("Venue", inManagedObjectContext: context) as! Venue
-        venueTaylor.name = "taylor"
-        venueTaylor.title = "Taylor Street"
-        venueTaylor.address = ""
-        venueTaylor.webSite = ""
-        venueTaylor.imageName = ""
-        venueTaylor.latitude = 48.114740
-        venueTaylor.longitude = -122.756826
-        venueTaylor.bodyText = "Grab a seat on a straw bale and enjoy a movie under the stars!"
-        
-        // MARK: Events and Items
 
-        var event = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context) as! Event
-        event.name = "cream"
-        event.type = eventType.Sub.rawValue
-        event.title = "Cream City Sound Check: Allen Stone"
-        event.director = "USA/2014/14 min. Director: Ryan Sarnowski"
-        event.webSite = ""
-        event.imageName = "cream.png"
-        event.bodyText = "Allen Stone gets some science dropped on him at the Microphone Museum and fills his belly at Speed Queen Bar-B-Que before doing a radio interview with 88Nine Radio Milwaukee and rocking two amazing sets at Turner Hall."
-        
-        var item1 = NSEntityDescription.insertNewObjectForEntityForName("ScheduleItem", inManagedObjectContext: context) as! ScheduleItem
-        item1.date = dateFormatter.dateFromString("09/19/2015 09:00:00")!
-        item1.day = "Saturday"
-        item1.event = event;
-        item1.venue = venueRosebud
+        // first do the venues
+        if let path = NSBundle.mainBundle().pathForResource("Venues", ofType: "json") {
+            if let data = NSData(contentsOfFile: path, options:NSDataReadingOptions.DataReadingMappedIfSafe, error:nil) {
+                var venuesArray: NSArray = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSArray
+                println(venuesArray)
+                for i in 0..<venuesArray.count {
+                    let dictionary = venuesArray[i] as! Dictionary<String, String>
+                    println(dictionary)
+                    var venue = NSEntityDescription.insertNewObjectForEntityForName("Venue", inManagedObjectContext: context) as! Venue
+                    
+                    venue.name = dictionary["name"]!
+                    venue.title = dictionary["title"]!
+                    venue.address = dictionary["address"]!
+                    venue.webSite = dictionary["webSite"]!
+                    venue.latitude = NSNumberFormatter().numberFromString(dictionary["latitude"]!)!.floatValue
+                    venue.longitude = NSNumberFormatter().numberFromString(dictionary["longitude"]!)!.floatValue
+                    venue.bodyText = dictionary["bodyText"]!
+                }
+                saveContext()
+            }
+        }
 
-        var item2 = NSEntityDescription.insertNewObjectForEntityForName("ScheduleItem", inManagedObjectContext: context) as! ScheduleItem
-        item2.date = dateFormatter.dateFromString("09/20/2015 21:30:00")!
-        item2.day = "Sunday"
-        item2.event = event;
-        item2.venue = venueRose
+        // then the events
+        if let path = NSBundle.mainBundle().pathForResource("Events", ofType: "json") {
+            if let data = NSData(contentsOfFile: path, options:NSDataReadingOptions.DataReadingMappedIfSafe, error:nil) {
+                var eventsArray: NSArray = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSArray
+                println(eventsArray)
+                for i in 0..<eventsArray.count {
+                    let dictionary = eventsArray[i] as! Dictionary<String, String>
+                    println(dictionary)
+                    var event = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context) as! Event
+                    
+                    event.name = dictionary["name"]!
+                    event.title = dictionary["title"]!
+                    event.director = dictionary["director"]!
+                    event.webSite = dictionary["webSite"]!
+                    event.bodyText = dictionary["bodyText"]!
+                    event.type = NSNumberFormatter().numberFromString(dictionary["type"]!)!.integerValue
+                }
+                saveContext()
+            }
+        }
         
-        saveContext()
-//------------------------------------------------------------------
-      
-        event = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context) as! Event
-        event.name = "ballad"
-        event.type = eventType.Main.rawValue
-        event.title = "The Ballad of Shovels and Rope"
-        event.director = "USA/2014/72 min. Director: Jace Freeman"
-        event.webSite = "http://www.theballadofshovelsandrope.com/"
-        event.imageName = ""
-        event.bodyText = "Make it work with what you've got. Two guitars, a junkyard drum kit, a handful of harmonicas, voices, and above all... songs. The Ballad of Shovels and Rope captures the tours and detours of a husband and wife as they create and release the critically acclaimed album “O’ Be Joyful.” Follow Cary Ann Hearst and Michael Trent as they travel from town to town, living out of their van with their hound dog and recording their album wherever they can. From working for tips to becoming 'Emerging Artist of the Year,' the family duo uses ingenuity and hard work to create something out of nothing."
-        
-        item1 = NSEntityDescription.insertNewObjectForEntityForName("ScheduleItem", inManagedObjectContext: context) as! ScheduleItem
-        item1.date = dateFormatter.dateFromString("09/19/2015 09:00:00")!
-        item1.day = "Saturday"
-        item1.event = event;
-        item1.venue = venueRosebud
-
-        item2 = NSEntityDescription.insertNewObjectForEntityForName("ScheduleItem", inManagedObjectContext: context) as! ScheduleItem
-        item2.date = dateFormatter.dateFromString("09/20/2015 21:30:00")!
-        item2.day = "Sunday"
-        item2.event = event;
-        item2.venue = venueRose
-        
-        saveContext()
-//------------------------------------------------------------------
-        
-        
-        event = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context) as! Event
-        event.name = "woman"
-        event.type = eventType.Main.rawValue
-        event.title = "For a Woman (Pour une Femme)"
-        event.director = "France/2013/110 min. Director: Diane Kurys"
-        event.webSite = "http://www.filmmovement.com/filmcatalog/index.asp?MerchandiseID=361"
-        event.imageName = ""
-        event.bodyText = "After her mother's death, Anne discovers old photos and letters that convince her to take a closer look at the life of her parents, Michel and Léna, who met in the concentration camps during World War II. Liberated, they moved to France to begin a new life together. Anne's research into their Jewish history and their ties to Lyon's Communist Party reveals the existence of her uncle Jean, who had never been mentioned. As she gradually closes in on the discovery she didn't know she was looking for, her father grows ever more ill, and may take the family secret to his grave. In a journey that stretches from post-war France to the 1980s, Anne's destiny intertwines with her father's past until they form a single, unforgettable story. "
-        
-        item1 = NSEntityDescription.insertNewObjectForEntityForName("ScheduleItem", inManagedObjectContext: context) as! ScheduleItem
-        item1.date = dateFormatter.dateFromString("09/18/2015 09:00:00")!
-        item1.day = "Friday"
-        item1.event = event;
-        item1.venue = venueTaylor
-        
-        item2 = NSEntityDescription.insertNewObjectForEntityForName("ScheduleItem", inManagedObjectContext: context) as! ScheduleItem
-        item2.date = dateFormatter.dateFromString("09/20/2015 21:00:00")!
-        item2.day = "Sunday"
-        item2.event = event;
-        item2.venue = venueRose
-        
-        
-        saveContext()
+        // finally the items
+        if let path = NSBundle.mainBundle().pathForResource("Items", ofType: "json") {
+            if let data = NSData(contentsOfFile: path, options:NSDataReadingOptions.DataReadingMappedIfSafe, error:nil) {
+                var itemsArray: NSArray = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSArray
+                println(itemsArray)
+                for i in 0..<itemsArray.count {
+                    let dictionary = itemsArray[i] as! Dictionary<String, String>
+                    println(dictionary)
+                    var item = NSEntityDescription.insertNewObjectForEntityForName("ScheduleItem", inManagedObjectContext: context) as! ScheduleItem
+                    
+                    item.date = dateFormatter.dateFromString(dictionary["date"]!)!
+                    item.day = dictionary["day"]!
+                    item.event = eventForName(dictionary["event"]!)
+                    item.venue = venueForName(dictionary["venue"]!)
+                }
+                saveContext()
+            }
+        }
     }
 
 }

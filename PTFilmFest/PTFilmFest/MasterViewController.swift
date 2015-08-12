@@ -2,7 +2,7 @@
 //  MasterViewController.swift
 //  PTFilmFest
 //
-//  Created by Steve Schauer on 6/29/15.
+//  Created by Steve Schauer on 8/7/15.
 //  Copyright (c) 2015 Steve Schauer. All rights reserved.
 //
 
@@ -10,42 +10,39 @@ import UIKit
 import CoreData
 
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
-    
+
     var detailViewController: DetailViewController? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
 
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            self.clearsSelectionOnViewWillAppear = false
-            self.preferredContentSize = CGSize(width: 320.0, height: 600.0)
-        }
-    }
-    
-    override func prefersStatusBarHidden() -> Bool {
-        return navigationController?.navigationBarHidden == true
+        self.preferredContentSize = CGSize(width: 320.0, height: 278.0/600.0 * 320)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "PTFilmFest"
-        self.navigationController?.navigationBarHidden = true
         if let split = self.splitViewController {
             let controllers = split.viewControllers
             self.detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
         }
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBarHidden = true
+    }
+
     // MARK: - Segues
-    // to move to detailViewcontroller
-    
+
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow() {
-                let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
+            let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
                 let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
                 controller.item = object
+                controller.managedObjectContext = self.managedObjectContext
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
                 controller.navigationItem.leftItemsSupplementBackButton = true
                 self.title = ""
@@ -54,9 +51,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
 
     // MARK: - Table View
-    
+
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        println("sections: \(self.fetchedResultsController.sections!.count)")
         return self.fetchedResultsController.sections?.count ?? 0
     }
 
@@ -64,6 +60,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         let sectionInfo = self.fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
         return sectionInfo.numberOfObjects
     }
+
     
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         var headerView=UIView(frame: CGRectMake(0, 0, tableView.bounds.size.width, 30))
@@ -88,22 +85,29 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        println(278.0/600.0 * UIScreen.mainScreen().bounds.size.width)
-        //return UITableViewAutomaticDimension;
-        return 278.0/600.0 * UIScreen.mainScreen().bounds.size.width
+        let imageHeight =  278.0/600.0 * UIScreen.mainScreen().bounds.size.width
+        return imageHeight
     }
 
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        cell.separatorInset = UIEdgeInsetsZero
+        cell.layoutMargins = UIEdgeInsetsZero
+        cell.preservesSuperviewLayoutMargins = false
+    }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! TableViewCell
         self.configureCell(cell, atIndexPath: indexPath)
         return cell
     }
+    
 
     func configureCell(cell: TableViewCell, atIndexPath indexPath: NSIndexPath) {
+        
         let item = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
         let event = item.event
         let venue = item.venue
+        
         
         cell.imageViewForCell.image = UIImage(named:"\(item.event.name)_small")
         cell.eventTitleLabel.text = event.title
@@ -113,11 +117,14 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         let dateString = dateFormatter.stringFromDate(item.date)
 
         cell.timeAndVenueLabel.text = "\(dateString) \(venue.title)"
+        println("event.type is \(event.type)")
+        
     }
 
     // MARK: - Fetched results controller
 
     var fetchedResultsController: NSFetchedResultsController {
+        
         if _fetchedResultsController != nil {
             return _fetchedResultsController!
         }
@@ -138,17 +145,12 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         
         fetchRequest.sortDescriptors = sortDescriptors
         
-        // Edit the section name key path and cache name if appropriate.
-        // nil for section name key path means "no sections".
         let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: "day", cacheName: "Master")
         aFetchedResultsController.delegate = self
         _fetchedResultsController = aFetchedResultsController
         
     	var error: NSError? = nil
     	if !_fetchedResultsController!.performFetch(&error) {
-    	     // Replace this implementation with code to handle the error appropriately.
-    	     // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-             //println("Unresolved error \(error), \(error.userInfo)")
     	     abort()
     	}
         
@@ -191,14 +193,14 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 //        self.tableView.endUpdates()
 //    }
 
-    /*
+    
      // Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed.
      
      func controllerDidChangeContent(controller: NSFetchedResultsController) {
          // In the simplest, most efficient, case, reload the table view.
          self.tableView.reloadData()
      }
-     */
+     
 
 }
 

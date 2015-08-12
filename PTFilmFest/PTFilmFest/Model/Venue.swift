@@ -14,7 +14,6 @@ class Venue: NSManagedObject {
 
     @NSManaged var address: String
     @NSManaged var bodyText: String
-    @NSManaged var imageName: String
     @NSManaged var latitude: NSNumber
     @NSManaged var longitude: NSNumber
     @NSManaged var name: String

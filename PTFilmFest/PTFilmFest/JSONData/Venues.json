@@ -1,0 +1,29 @@
+[
+    {
+        "name": "rose",
+        "title": "Rose Theatre",
+        "address": "235 Taylor St.",
+        "webSite": "http://www.rosetheatre.com",
+        "longitude": "-122.757035",
+        "latitude": "48.11484",
+        "bodyText": "Port Townsend enjoyed a lively theater scene before the dawn of the twentieth century.  The Palace Theatre, The Standard, and the Learned Opera House showcased local talent and traveling vaudeville troupes 'of the highest caliber.'  The Rose, which opened around the corner on Water Street in 1907, continued this tradition but added a recent invention to its repertoire: moving pictures.  In December 1908 the Rose moved to its current location in Taylor Street.\n\nTom Mix, Mary Pickford, Douglas Fairbanks, Lillian Gish, and countless other Hollywood stars graced the Rose Theatre's silver screen for more than fifty years before it closed its doors November 8, 1958 with the potboiler High School Confidential.  The Rose reopened July 11, 1992, and with the addition of the Rosebud Cinema three years later, has become one of the most treasured features of Port Townsend's National Historic District.\n\nSo, experience a film at the Rose, where the popcorn is fresh, the butter is real, the sound is superb, and every show is personally introduced by our host."
+    },
+    {
+        "name": "rosebud",
+        "title": "Rosebud Theatre",
+        "address": "235 Taylor St.",
+        "webSite": "http://www.rosetheatre.com",
+        "longitude": "-122.757035",
+        "latitude": "48.11484",
+        "bodyText": "Port Townsend enjoyed a lively theater scene before the dawn of the twentieth century.  The Palace Theatre, The Standard, and the Learned Opera House showcased local talent and traveling vaudeville troupes 'of the highest caliber.'  The Rose, which opened around the corner on Water Street in 1907, continued this tradition but added a recent invention to its repertoire: moving pictures.  In December 1908 the Rose moved to its current location in Taylor Street.\n\nTom Mix, Mary Pickford, Douglas Fairbanks, Lillian Gish, and countless other Hollywood stars graced the Rose Theatre's silver screen for more than fifty years before it closed its doors November 8, 1958 with the potboiler High School Confidential.  The Rose reopened July 11, 1992, and with the addition of the Rosebud Cinema three years later, has become one of the most treasured features of Port Townsend's National Historic District.\n\nSo, experience a film at the Rose, where the popcorn is fresh, the butter is real, the sound is superb, and every show is personally introduced by our host."
+    },
+    {
+        "name": "taylor",
+        "title": "Taylor Street",
+        "address": "",
+        "webSite": "",
+        "longitude": "-122.756826",
+        "latitude": "48.11474",
+        "bodyText": "Grab a seat on a straw bale and enjoy a movie under the stars!"
+    }
+]

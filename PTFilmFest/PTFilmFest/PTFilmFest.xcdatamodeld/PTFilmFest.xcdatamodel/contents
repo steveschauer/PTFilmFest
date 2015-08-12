@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D136" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14E46" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Event" representedClassName="Event">
         <attribute name="bodyText" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="director" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imageName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mainFeature" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="webSite" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="scheduleItem" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScheduleItem" inverseName="event" inverseEntity="ScheduleItem" syncable="YES"/>
         <userInfo/>
@@ -20,7 +20,6 @@
     <entity name="Venue" representedClassName="Venue" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="bodyText" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imageName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
@@ -29,8 +28,8 @@
         <relationship name="scheduleItem" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScheduleItem" inverseName="venue" inverseEntity="ScheduleItem" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Event" positionX="261" positionY="189" width="128" height="165"/>
+        <element name="Event" positionX="342" positionY="-234" width="128" height="163"/>
         <element name="ScheduleItem" positionX="655" positionY="207" width="128" height="103"/>
-        <element name="Venue" positionX="261" positionY="234" width="128" height="180"/>
+        <element name="Venue" positionX="261" positionY="234" width="128" height="165"/>
     </elements>
 </model>
