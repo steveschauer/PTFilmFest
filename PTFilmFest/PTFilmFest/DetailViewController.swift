@@ -46,54 +46,9 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
 
     var event: Event?
     var venue: Venue?
-    
-    func eventForName(name:String) -> Event {
-        let context = self.managedObjectContext!;
-        
-        var fetchRequest = NSFetchRequest(entityName: "Event")
-        fetchRequest.predicate = NSPredicate(format: "name CONTAINS[c] %@", name)
-        
-        let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [Event]
-        return fetchResults![0];
-    }
-    
-    func locationManager(manager: CLLocationManager,
-        didFailWithError error: NSError) {
-            println(error)
-    }
 
-    func configureView() {
-        //if let thisItem: ScheduleItem = item {
-            event = item!.event
-            venue = item!.venue
-            
-            mapButton.layer.borderWidth=1.0
-            mapButton.layer.borderColor=UIColor.lightGrayColor().CGColor
-            mapButton.layer.cornerRadius = 4.0
-            
-            venueNameButton.titleLabel!.text = venue!.title
-            venueNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
-            title = event!.title
-            imageView.image = UIImage(named:"\(event!.name)_small")!
-            
-            
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.dateFormat = "H:mm a"
-            let dateString = dateFormatter.stringFromDate(item!.date)
-            dateAndTimeLabel!.text = "\(item!.day) \(dateString)"
-            eventDetailsLabel!.text = "\(event!.director)"
-            
-            bodyTextLabel!.text = event!.bodyText
-            
-            if event!.type == 1 {
-                println("Hey")
-            }
-    }
+    // MARK: View Life Cycle
     
-    override func viewWillLayoutSubviews() {
-        self.configureView()
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBarHidden = false
@@ -103,45 +58,51 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         locationManager!.delegate = self
         locationManager!.requestWhenInUseAuthorization()
         locationManager!.startUpdatingLocation()
-        
-        
-        
-//        var tapGesture = UITapGestureRecognizer(target: self, action: "showMap")
-//        self.view.addGestureRecognizer(tapGesture)
-
-//        let value = UIInterfaceOrientation.LandscapeLeft.rawValue
-//        UIDevice.currentDevice().setValue(value, forKey: "orientation")
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         mapRect = mapView.frame
     }
-
     
-    @IBAction func shareAction(sender: UIBarButtonItem) {
+    override func viewWillLayoutSubviews() {
+        self.configureView()
+    }
+    
+    func configureView() {
+        event = item!.event
+        venue = item!.venue
         
-        if let item: ScheduleItem = self.item {
-            event = self.item!.event
-            venue = self.item!.venue
-            
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.dateFormat = "H:mm a"
-            let dateString = dateFormatter.stringFromDate(item.date)
-            let textToShare = "\(event!.title) \(item.day) \(dateString)"
-            if let myWebsite = NSURL(string: "http://www.ptfilmfest.com/Festival/Program.html#\(event!.name)")
-            {
-                let objectsToShare = [textToShare, myWebsite]
-                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-                
-                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList, UIActivityTypeAssignToContact, UIActivityTypePostToFlickr, UIActivityTypeSaveToCameraRoll, UIActivityTypePostToVimeo, UIActivityTypePostToWeibo]
-                //
-                
-                self.presentViewController(activityVC, animated: true, completion: nil)
-            }
+        mapButton.layer.borderWidth=1.0
+        mapButton.layer.borderColor=UIColor.lightGrayColor().CGColor
+        mapButton.layer.cornerRadius = 4.0
+        
+        venueNameButton.titleLabel!.text = venue!.title
+        venueNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
+        title = event!.title
+        imageView.image = UIImage(named:"\(event!.name)_small")!
+        
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "H:mm a"
+        let dateString = dateFormatter.stringFromDate(item!.date)
+        dateAndTimeLabel!.text = "\(item!.day) \(dateString)"
+        eventDetailsLabel!.text = "\(event!.director)"
+        
+        bodyTextLabel!.text = event!.bodyText
+        
+        if event!.type == 1 {
+            println("Hey")
         }
     }
     
+    // MARK: Map Functions
+    
+    func locationManager(manager: CLLocationManager,
+        didFailWithError error: NSError) {
+            println(error)
+    }
+
     func handleTapGesture(sender: UITapGestureRecognizer) {
         self.view.removeGestureRecognizer(sender)
         let endRect = mapButton.frame
@@ -154,7 +115,6 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             })
         
     }
-    
     
     @IBAction func showMap(sender: UIButton) {
         configureMapView()
@@ -205,5 +165,46 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         mapView.setRegion(adjustedRegion, animated:true)
     }
     
+    // TODO: Find "other showings" of this ScheduleItem
+    //    func otherShowings() -> Array<ScheduleItem> {
+    //
+    //    }
+    
+    func eventForName(name:String) -> Event {
+        let context = self.managedObjectContext!;
+        
+        var fetchRequest = NSFetchRequest(entityName: "Event")
+        fetchRequest.predicate = NSPredicate(format: "name CONTAINS[c] %@", name)
+        
+        let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [Event]
+        return fetchResults![0];
+    }
+    
+    // MARK: Share action
+    
+    @IBAction func shareAction(sender: UIBarButtonItem) {
+        
+        if let item: ScheduleItem = self.item {
+            event = self.item!.event
+            venue = self.item!.venue
+            
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "H:mm a"
+            let dateString = dateFormatter.stringFromDate(item.date)
+            let textToShare = "\(event!.title) \(item.day) \(dateString)"
+            if let myWebsite = NSURL(string: "http://www.ptfilmfest.com/Festival/Program.html#\(event!.name)")
+            {
+                let objectsToShare = [textToShare, myWebsite]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                
+                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList, UIActivityTypeAssignToContact, UIActivityTypePostToFlickr, UIActivityTypeSaveToCameraRoll, UIActivityTypePostToVimeo, UIActivityTypePostToWeibo]
+                //
+                
+                self.presentViewController(activityVC, animated: true, completion: nil)
+            }
+        }
+    }
+    
+
 }
 
