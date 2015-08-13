@@ -57,7 +57,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         locationManager = CLLocationManager()
         locationManager!.delegate = self
         locationManager!.requestWhenInUseAuthorization()
-        locationManager!.startUpdatingLocation()
+        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -94,12 +94,25 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         if event!.type == 1 {
             println("Hey")
         }
+        otherShowings()
     }
     
     // MARK: Map Functions
+
+    func locationManager(manager: CLLocationManager,
+        didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+            if status == CLAuthorizationStatus.AuthorizedWhenInUse {
+                locationManager!.startUpdatingLocation()
+            }
+    }
     
     func locationManager(manager: CLLocationManager,
         didFailWithError error: NSError) {
+            
+            if CLAuthorizationStatus.AuthorizedWhenInUse == CLLocationManager.authorizationStatus() {
+                println("we have status, so WTF?")
+            }
+
             println(error)
     }
 
@@ -165,10 +178,18 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         mapView.setRegion(adjustedRegion, animated:true)
     }
     
-    // TODO: Find "other showings" of this ScheduleItem
-    //    func otherShowings() -> Array<ScheduleItem> {
-    //
-    //    }
+    func otherShowings() -> Array<ScheduleItem>? {
+        let context = self.managedObjectContext!;
+        
+        var fetchRequest = NSFetchRequest(entityName: "ScheduleItem")
+        fetchRequest.predicate = NSPredicate(format: "event == %@", self.item!.event)
+        
+        let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [ScheduleItem]
+        
+        // filter self.item out, and then,
+        return fetchResults;
+        
+    }
     
     func eventForName(name:String) -> Event {
         let context = self.managedObjectContext!;
