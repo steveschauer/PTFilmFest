@@ -36,15 +36,6 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="242" verticalCompressionResistancePriority="741" translatesAutoresizingMaskIntoConstraints="NO" id="9pj-7b-PJC">
                                 <rect key="frame" x="-2" y="64" width="604" height="278"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" placeholderIntrinsicWidth="44" placeholderIntrinsicHeight="44" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DnJ-nf-quM">
-                                <rect key="frame" x="16" y="350" width="44" height="44"/>
-                                <state key="normal" image="mapGlyph.png">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="showMap:" destination="JEX-9P-axG" eventType="touchUpInside" id="Xem-uX-T5S"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="left" placeholderIntrinsicWidth="516" placeholderIntrinsicHeight="30" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QMf-gP-2qo">
                                 <rect key="frame" x="68" y="357" width="516" height="30"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -55,30 +46,52 @@
                                     <action selector="showMap:" destination="JEX-9P-axG" eventType="touchUpInside" id="V1D-j2-gRL"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Date and Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="5bb-sb-GD3">
-                                <rect key="frame" x="16" y="402" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text="Date and Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" translatesAutoresizingMaskIntoConstraints="NO" id="5bb-sb-GD3">
+                                <rect key="frame" x="16" y="402" width="568" height="20"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
+                                <variation key="heightClass=compact" misplaced="YES">
+                                    <rect key="frame" x="16" y="358" width="568" height="10"/>
+                                </variation>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Country, Year, Length, Director" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="qdV-fF-F8M">
-                                <rect key="frame" x="16" y="431" width="568" height="18"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RP5-Su-tKj" userLabel="LikeButton" customClass="LikeButton">
+                                <rect key="frame" x="517" y="415" width="28" height="27"/>
+                                <state key="normal" image="heart-empty"/>
+                                <connections>
+                                    <action selector="likeButtonPressed:" destination="JEX-9P-axG" eventType="touchUpInside" id="4RF-w7-bBC"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Country, Year, Length, Director" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="qdV-fF-F8M">
+                                <rect key="frame" x="16" y="430" width="466" height="14"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
+                                <variation key="heightClass=compact" misplaced="YES">
+                                    <rect key="frame" x="16" y="376" width="466" height="0.0"/>
+                                </variation>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sme-35-9Xh">
-                                <rect key="frame" x="16" y="488" width="568" height="97"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sme-35-9Xh">
+                                <rect key="frame" x="16" y="483" width="568" height="102"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g6-Yg-VYq">
-                                <rect key="frame" x="16" y="456" width="94" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="253" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g6-Yg-VYq">
+                                <rect key="frame" x="16" y="451" width="94" height="30"/>
                                 <state key="normal" title="On the Web...">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="748" placeholderIntrinsicWidth="44" placeholderIntrinsicHeight="44" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DnJ-nf-quM" userLabel="MapButton">
+                                <rect key="frame" x="16" y="350" width="44" height="44"/>
+                                <state key="normal" image="mapGlyph.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="showMap:" destination="JEX-9P-axG" eventType="touchUpInside" id="Xem-uX-T5S"/>
+                                </connections>
                             </button>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="bSg-8g-M1R">
                                 <rect key="frame" x="16" y="112" width="568" height="432"/>
@@ -86,23 +99,29 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="qdV-fF-F8M" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="3G6-q9-HfZ"/>
+                            <constraint firstItem="bSg-8g-M1R" firstAttribute="top" secondItem="SYR-Wa-9uf" secondAttribute="bottom" constant="48" id="5ff-v7-iLR"/>
                             <constraint firstItem="9pj-7b-PJC" firstAttribute="top" secondItem="SYR-Wa-9uf" secondAttribute="bottom" id="68L-cX-yFh"/>
+                            <constraint firstItem="qdV-fF-F8M" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="7Fv-Ra-SVV"/>
                             <constraint firstItem="Sme-35-9Xh" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="8MN-Dq-11U"/>
                             <constraint firstAttribute="centerX" secondItem="9pj-7b-PJC" secondAttribute="centerX" id="B0c-8x-xbd"/>
                             <constraint firstItem="9pj-7b-PJC" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" constant="-18" id="C6g-pM-Mey"/>
+                            <constraint firstItem="RP5-Su-tKj" firstAttribute="top" secondItem="QMf-gP-2qo" secondAttribute="bottom" constant="28" id="G7q-tU-Vnr"/>
                             <constraint firstItem="0g6-Yg-VYq" firstAttribute="top" secondItem="qdV-fF-F8M" secondAttribute="bottom" constant="7" id="J6z-uu-7Jp"/>
                             <constraint firstItem="0g6-Yg-VYq" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="L09-sG-cME"/>
+                            <constraint firstItem="GAO-Cl-Wes" firstAttribute="top" secondItem="bSg-8g-M1R" secondAttribute="bottom" constant="56" id="O0Q-pF-7jG"/>
                             <constraint firstItem="Sme-35-9Xh" firstAttribute="top" secondItem="0g6-Yg-VYq" secondAttribute="bottom" constant="2" id="P6p-JA-fHa"/>
                             <constraint firstItem="DnJ-nf-quM" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="UCm-I9-yWM"/>
                             <constraint firstItem="5bb-sb-GD3" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="Xc9-Mu-s7O"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="RP5-Su-tKj" secondAttribute="trailing" constant="39" id="ZEW-9i-5dK"/>
+                            <constraint firstItem="bSg-8g-M1R" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="ZGM-aQ-Zug"/>
                             <constraint firstItem="5bb-sb-GD3" firstAttribute="top" secondItem="DnJ-nf-quM" secondAttribute="bottom" constant="8" id="af3-hN-n7L"/>
-                            <constraint firstItem="qdV-fF-F8M" firstAttribute="trailing" secondItem="svH-Pt-448" secondAttribute="trailingMargin" id="bzH-QI-AcC"/>
                             <constraint firstItem="bSg-8g-M1R" firstAttribute="trailing" secondItem="svH-Pt-448" secondAttribute="trailingMargin" id="eZr-H8-SuY"/>
                             <constraint firstItem="5bb-sb-GD3" firstAttribute="trailing" secondItem="svH-Pt-448" secondAttribute="trailingMargin" id="jXg-GL-4Nh"/>
                             <constraint firstItem="Sme-35-9Xh" firstAttribute="trailing" secondItem="svH-Pt-448" secondAttribute="trailingMargin" id="k2e-Ar-ID7"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="qdV-fF-F8M" secondAttribute="trailing" constant="102" id="mOt-lI-Roz"/>
                             <constraint firstAttribute="width" secondItem="9pj-7b-PJC" secondAttribute="height" multiplier="300:139" id="q1t-A4-Tni"/>
                             <constraint firstItem="DnJ-nf-quM" firstAttribute="top" secondItem="9pj-7b-PJC" secondAttribute="bottom" constant="8" id="qPK-Wh-qWa"/>
+                            <constraint firstItem="bSg-8g-M1R" firstAttribute="trailing" secondItem="svH-Pt-448" secondAttribute="trailingMargin" id="qnB-Jo-kLu"/>
                             <constraint firstItem="GAO-Cl-Wes" firstAttribute="top" secondItem="bSg-8g-M1R" secondAttribute="bottom" constant="56" id="rVz-op-BpN"/>
                             <constraint firstItem="QMf-gP-2qo" firstAttribute="centerY" secondItem="DnJ-nf-quM" secondAttribute="centerY" id="rpd-he-o0B"/>
                             <constraint firstItem="bSg-8g-M1R" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="sub-WK-aCZ"/>
@@ -126,6 +145,7 @@
                         <outlet property="dateAndTimeLabel" destination="5bb-sb-GD3" id="M1N-Vy-ve6"/>
                         <outlet property="eventDetailsLabel" destination="qdV-fF-F8M" id="6Hc-FV-qo3"/>
                         <outlet property="imageView" destination="9pj-7b-PJC" id="2C1-XV-49r"/>
+                        <outlet property="likeButton" destination="RP5-Su-tKj" id="eRI-Fq-l0g"/>
                         <outlet property="mapButton" destination="DnJ-nf-quM" id="Wea-5I-dsw"/>
                         <outlet property="mapView" destination="bSg-8g-M1R" id="AbO-88-c1b"/>
                         <outlet property="venueNameButton" destination="QMf-gP-2qo" id="fLT-N3-maY"/>
@@ -236,6 +256,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="heart-empty" width="28" height="27"/>
         <image name="mapGlyph.png" width="44" height="44"/>
     </resources>
     <inferredMetricsTieBreakers>

@@ -31,6 +31,8 @@
 		92E0D05D1B754AE3006B587F /* mapGlyph.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D05B1B754AE3006B587F /* mapGlyph.png */; };
 		92E0D05E1B754AE3006B587F /* mapGlyph@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */; };
 		92E0D0601B795855006B587F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92E0D05F1B795855006B587F /* MapKit.framework */; };
+		92E0D0651B7D13F4006B587F /* CircleSpinnerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0621B7D13F4006B587F /* CircleSpinnerView.m */; };
+		92E0D0661B7D13F4006B587F /* LikeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0641B7D13F4006B587F /* LikeButton.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,11 @@
 		92E0D05B1B754AE3006B587F /* mapGlyph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mapGlyph.png; sourceTree = "<group>"; };
 		92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mapGlyph@2x.png"; sourceTree = "<group>"; };
 		92E0D05F1B795855006B587F /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		92E0D0611B7D13F4006B587F /* CircleSpinnerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleSpinnerView.h; sourceTree = "<group>"; };
+		92E0D0621B7D13F4006B587F /* CircleSpinnerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleSpinnerView.m; sourceTree = "<group>"; };
+		92E0D0631B7D13F4006B587F /* LikeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikeButton.h; sourceTree = "<group>"; };
+		92E0D0641B7D13F4006B587F /* LikeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LikeButton.m; sourceTree = "<group>"; };
+		92E0D0701B7D191B006B587F /* PTFilmFest_Bridging_Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PTFilmFest_Bridging_Header.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +122,7 @@
 		92E0D0101B74FDE9006B587F /* PTFilmFest */ = {
 			isa = PBXGroup;
 			children = (
+				92E0D06F1B7D18F0006B587F /* Objective-C */,
 				92E0D0131B74FDE9006B587F /* AppDelegate.swift */,
 				92E0D0181B74FDE9006B587F /* MasterViewController.swift */,
 				92E0D01A1B74FDE9006B587F /* DetailViewController.swift */,
@@ -197,6 +205,18 @@
 				92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		92E0D06F1B7D18F0006B587F /* Objective-C */ = {
+			isa = PBXGroup;
+			children = (
+				92E0D0611B7D13F4006B587F /* CircleSpinnerView.h */,
+				92E0D0621B7D13F4006B587F /* CircleSpinnerView.m */,
+				92E0D0631B7D13F4006B587F /* LikeButton.h */,
+				92E0D0641B7D13F4006B587F /* LikeButton.m */,
+				92E0D0701B7D191B006B587F /* PTFilmFest_Bridging_Header.h */,
+			);
+			name = "Objective-C";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -320,7 +340,9 @@
 				92E0D0541B7503E5006B587F /* TableViewCell.swift in Sources */,
 				92E0D0171B74FDE9006B587F /* PTFilmFest.xcdatamodeld in Sources */,
 				92E0D0191B74FDE9006B587F /* MasterViewController.swift in Sources */,
+				92E0D0651B7D13F4006B587F /* CircleSpinnerView.m in Sources */,
 				92E0D0521B7503B1006B587F /* Venue.swift in Sources */,
+				92E0D0661B7D13F4006B587F /* LikeButton.m in Sources */,
 				92E0D0511B7503B1006B587F /* ScheduleItem.swift in Sources */,
 				92E0D01B1B74FDE9006B587F /* DetailViewController.swift in Sources */,
 				92E0D0501B7503B1006B587F /* Event.swift in Sources */,
@@ -456,6 +478,7 @@
 				INFOPLIST_FILE = PTFilmFest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = PTFilmFest/PTFilmFest_Bridging_Header.h;
 			};
 			name = Debug;
 		};
@@ -467,6 +490,7 @@
 				INFOPLIST_FILE = PTFilmFest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = PTFilmFest/PTFilmFest_Bridging_Header.h;
 			};
 			name = Release;
 		};

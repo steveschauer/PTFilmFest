@@ -32,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         if fetchResults!.count == 0 {
             loadDataFromJSON()
         }
+        
         return true
     }
 
@@ -199,7 +200,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                     event.director = dictionary["director"]!
                     event.webSite = dictionary["webSite"]!
                     event.bodyText = dictionary["bodyText"]!
-                    event.type = NSNumberFormatter().numberFromString(dictionary["type"]!)!.integerValue
+                    event.type = dictionary["type"]!
                 }
                 saveContext()
             }

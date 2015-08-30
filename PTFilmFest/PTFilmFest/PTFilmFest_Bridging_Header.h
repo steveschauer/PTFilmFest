@@ -9,5 +9,7 @@
 #ifndef PTFilmFest_PTFilmFest_Bridging_Header_h
 #define PTFilmFest_PTFilmFest_Bridging_Header_h
 
+#import "CircleSpinnerView.h"
+#import "LikeButton.h"
 
 #endif

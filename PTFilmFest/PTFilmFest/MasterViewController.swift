@@ -78,7 +78,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if let sections = fetchedResultsController.sections {
             let currentSection = sections[section] as! NSFetchedResultsSectionInfo
-            let title = "PT Film Fest - \(currentSection.name!)"
+            let title = "PT Film Fest - \(currentSection.name)"
             return title
             }
         return nil

@@ -32,11 +32,27 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet weak var dateAndTimeLabel: UILabel!
     @IBOutlet weak var eventDetailsLabel: UILabel!
     @IBOutlet weak var mapButton: UIButton!
-    @IBOutlet weak var venueNameButton: UIButton!
+    @IBOutlet var venueNameButton: UIButton!
     @IBOutlet weak var bodyTextLabel: UITextView!
     @IBOutlet weak var testLabel: UILabel!
     @IBOutlet weak var mapView: MKMapView!
-
+    @IBOutlet weak var likeButton: LikeButton!
+    @IBAction func likeButtonPressed(sender: LikeButton) {
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW,
+            Int64(1 * Double(NSEC_PER_SEC)))
+        if likeButton.likeButtonState == LikeState.NotLiked {
+            likeButton.likeButtonState = LikeState.Liking
+            dispatch_after(delayTime, dispatch_get_main_queue()) {
+                self.likeButton.likeButtonState = LikeState.Liked
+            }
+        } else {
+            likeButton.likeButtonState = LikeState.Unliking
+            dispatch_after(delayTime, dispatch_get_main_queue()) {
+                self.likeButton.likeButtonState = LikeState.NotLiked
+            }
+        }
+    }
+    
     var item: ScheduleItem? // {
 //        didSet {
 //            // Update the view.
@@ -58,16 +74,24 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         locationManager!.delegate = self
         locationManager!.requestWhenInUseAuthorization()
         
+        self.configureView()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+
+        super.viewWillAppear(animated);
+//        configureView()
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         mapRect = mapView.frame
+//        configureView()
     }
     
-    override func viewWillLayoutSubviews() {
-        self.configureView()
-    }
+//    override func viewWillLayoutSubviews() {
+//        self.configureView()
+//    }
     
     func configureView() {
         event = item!.event
@@ -77,9 +101,11 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         mapButton.layer.borderColor=UIColor.lightGrayColor().CGColor
         mapButton.layer.cornerRadius = 4.0
         
-        venueNameButton.titleLabel!.text = venue!.title
         venueNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
+        venueNameButton.titleLabel!.text = venue!.title
+        
         title = event!.title
+        
         imageView.image = UIImage(named:"\(event!.name)_small")!
         
         
@@ -91,9 +117,10 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         bodyTextLabel!.text = event!.bodyText
         
-        if event!.type == 1 {
+        if event!.type == "1" {
             println("Hey")
         }
+        
         otherShowings()
     }
     
@@ -143,6 +170,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     func configureMapView() {
+        
         mapView.delegate = self
         mapView.showsUserLocation = true
         mapView.clipsToBounds = true
@@ -150,17 +178,30 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         mapView.removeAnnotations(mapView.annotations)
         
-        let eventLocation = CLLocation(latitude:venue!.latitude.doubleValue, longitude: venue!.longitude.doubleValue)
         let eventCoordinate = CLLocationCoordinate2DMake(venue!.latitude.doubleValue, venue!.longitude.doubleValue)
         let annotation = MapPin.self.init(coordinate: eventCoordinate, title: venue!.title, subtitle: venue!.address)
+        
+        //3D Camera
+        let mapCamera = MKMapCamera()
+        mapCamera.centerCoordinate = eventCoordinate
+        mapCamera.pitch = 45;
+        mapCamera.altitude = 500;
+        mapCamera.heading = 45;
+        
+        //Set MKmapView camera property
+        self.mapView.camera = mapCamera;
+        
         mapView.addAnnotation(annotation)
         mapView.selectAnnotation(annotation, animated: true)
         
         let metersPerMile = 1609.344
         var distance = 0.2 * metersPerMile
-        
+
         // set the region to show user and venue, if possible
         if let userLocation = mapView.userLocation.location {
+            
+            let eventLocation = CLLocation(latitude:venue!.latitude.doubleValue, longitude: venue!.longitude.doubleValue)
+
             distance = userLocation.distanceFromLocation(eventLocation)
             
             if distance > 0.5 * metersPerMile {
@@ -179,6 +220,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     func otherShowings() -> Array<ScheduleItem>? {
+        
         let context = self.managedObjectContext!;
         
         var fetchRequest = NSFetchRequest(entityName: "ScheduleItem")
@@ -188,7 +230,6 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         // filter self.item out, and then,
         return fetchResults;
-        
     }
     
     func eventForName(name:String) -> Event {

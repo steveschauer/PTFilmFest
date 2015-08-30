@@ -6,7 +6,7 @@
         <attribute name="mainFeature" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="type" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="webSite" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="scheduleItem" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScheduleItem" inverseName="event" inverseEntity="ScheduleItem" syncable="YES"/>
         <userInfo/>
@@ -28,7 +28,7 @@
         <relationship name="scheduleItem" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScheduleItem" inverseName="venue" inverseEntity="ScheduleItem" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Event" positionX="342" positionY="-234" width="128" height="163"/>
+        <element name="Event" positionX="342" positionY="-234" width="128" height="165"/>
         <element name="ScheduleItem" positionX="655" positionY="207" width="128" height="103"/>
         <element name="Venue" positionX="261" positionY="234" width="128" height="165"/>
     </elements>

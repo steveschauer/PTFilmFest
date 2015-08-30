@@ -18,6 +18,20 @@
 
 @end
 @implementation LikeButton
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    self.spinnerView = [[CircleSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    [self addSubview:self.spinnerView];
+    
+    self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    
+    self.contentEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+    self.contentVerticalAlignment = UIControlContentVerticalAlignmentTop;
+    
+    self.likeButtonState = LikeStateNotLiked;
+}
+
 - (instancetype) init {
     self = [super init];
     
@@ -60,12 +74,14 @@
     switch (_likeButtonState) {
         case LikeStateLiking:
         case LikeStateUnliking:
+            NSLog(@"hidden!");
             self.spinnerView.hidden = NO;
             self.userInteractionEnabled = NO;
             break;
             
         case LikeStateLiked:
         case LikeStateNotLiked:
+            NSLog(@"unhidden!");
             self.spinnerView.hidden = YES;
             self.userInteractionEnabled = YES;
     }

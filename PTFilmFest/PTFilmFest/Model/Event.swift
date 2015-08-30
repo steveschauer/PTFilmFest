@@ -20,7 +20,7 @@ class Event: NSManagedObject {
     @NSManaged var bodyText: String
     @NSManaged var director: String
     @NSManaged var name: String
-    @NSManaged var type: Int
+    @NSManaged var type: String
     @NSManaged var mainFeature: String
     @NSManaged var webSite: String
     @NSManaged var scheduleItem: NSSet
