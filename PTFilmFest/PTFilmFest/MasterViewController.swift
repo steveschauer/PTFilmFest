@@ -1,4 +1,4 @@
-//
+////
 //  MasterViewController.swift
 //  PTFilmFest
 //
@@ -13,11 +13,12 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
     var detailViewController: DetailViewController? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
+    var suspendUpdates = false
 
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.preferredContentSize = CGSize(width: 320.0, height: 278.0/600.0 * 320)
+        self.preferredContentSize = CGSize(width: 320.0, height: 9/16 * 320)
     }
 
     override func viewDidLoad() {
@@ -27,11 +28,30 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
             let controllers = split.viewControllers
             self.detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateCompleted:", name:"updateFestivalDataComplete", object: nil)
+        
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        if appDelegate.shouldUpdateFestivalData() {
+            
+            let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc : UpdateViewController = storyboard.instantiateViewControllerWithIdentifier("updateViewController") as! UpdateViewController
+            self.presentViewController(vc, animated: true, completion: nil)
+        }
+    }
+    
+    func updateCompleted(notification: NSNotification) {
+        NSNotificationCenter.defaultCenter().removeObserver(self) // Remove from all notifications being observed
+        self.tableView.reloadData()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBarHidden = true
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
     }
 
     // MARK: - Segues
@@ -78,14 +98,14 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if let sections = fetchedResultsController.sections {
             let currentSection = sections[section] as! NSFetchedResultsSectionInfo
-            let title = "PT Film Fest - \(currentSection.name)"
+            let title = "PT Film Fest - \(currentSection.name!)"
             return title
             }
         return nil
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let imageHeight =  278.0/600.0 * UIScreen.mainScreen().bounds.size.width
+        let imageHeight =  9/16 * UIScreen.mainScreen().bounds.size.width
         return imageHeight
     }
 
@@ -101,28 +121,27 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         return cell
     }
     
-
+    
     func configureCell(cell: TableViewCell, atIndexPath indexPath: NSIndexPath) {
         
-        let item = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
-        let event = item.event
-        let venue = item.venue
-        
-        
-        cell.imageViewForCell.image = UIImage(named:"\(item.event.name)_small")
-        cell.eventTitleLabel.text = event.title
+        let item:ScheduleItem = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
         
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "H:mm a"
         let dateString = dateFormatter.stringFromDate(item.date)
-
-        cell.timeAndVenueLabel.text = "\(dateString) \(venue.title)"
-        println("event.type is \(event.type)")
+        
+        if let event = item.event {
+        let venue = item.venue
+        
+        cell.imageViewForCell.image = UIImage(data: event.imageData)//UIImage(named:"\(item.event.name)_small")
+        cell.eventTitleLabel.text = event.title
+        cell.timeAndVenueLabel.text = "\(dateString) \(venue!.title)"
+        }
         
     }
-
+    
     // MARK: - Fetched results controller
-
+    
     var fetchedResultsController: NSFetchedResultsController {
         
         if _fetchedResultsController != nil {
@@ -139,9 +158,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         
         // Edit the sort key as appropriate.
         let sortDescriptor1 = NSSortDescriptor(key: "date", ascending: true)
-        let sortDescriptor2 = NSSortDescriptor(key: "venue", ascending: true)
-        let sortDescriptor3 = NSSortDescriptor(key: "event.type", ascending: true)
-        let sortDescriptors = [sortDescriptor1, sortDescriptor2, sortDescriptor3]
+        //let sortDescriptor2 = NSSortDescriptor(key: "venue", ascending: true)
+        //let sortDescriptor3 = NSSortDescriptor(key: "event.type", ascending: true)
+        let sortDescriptors = [sortDescriptor1]
         
         fetchRequest.sortDescriptors = sortDescriptors
         
@@ -180,7 +199,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 //            case .Delete:
 //                tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
 //            case .Update:
-//                self.configureCell(tableView.cellForRowAtIndexPath(indexPath!)!, atIndexPath: indexPath!)
+//                self.configureCell(tableView.cellForRowAtIndexPath(indexPath!)! as! TableViewCell, atIndexPath: indexPath!)
 //            case .Move:
 //                tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
 //                tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
@@ -194,13 +213,15 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 //    }
 
     
-     // Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed.
-     
-     func controllerDidChangeContent(controller: NSFetchedResultsController) {
-         // In the simplest, most efficient, case, reload the table view.
-         self.tableView.reloadData()
-     }
-     
+    // Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed.
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        // In the simplest, most efficient, case, reload the table view.
+        if suspendUpdates == false {
+            self.tableView.reloadData()
+        }
+    }
+    
 
 }
 

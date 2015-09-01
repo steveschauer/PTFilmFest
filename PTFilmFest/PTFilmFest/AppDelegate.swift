@@ -6,36 +6,34 @@
 //  Copyright (c) 2015 Steve Schauer. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import CoreData
+import MapKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
-
+    
     var window: UIWindow?
-
-
+    var controller:MasterViewController?
+    var token:NSDictionary?
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        
         let splitViewController = self.window!.rootViewController as! UISplitViewController
         let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
         navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
         splitViewController.delegate = self
-
-        let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
-        let controller = masterNavigationController.topViewController as! MasterViewController
-        controller.managedObjectContext = self.managedObjectContext
         
-        // one time data load
-        var fetchRequest = NSFetchRequest(entityName: "Venue")
-        let fetchResults = self.managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Venue]
-        if fetchResults!.count == 0 {
-            loadDataFromJSON()
-        }
+        let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
+        controller = masterNavigationController.topViewController as? MasterViewController
+        controller?.managedObjectContext = self.managedObjectContext
+        
+        //getFestivalData()
         
         return true
     }
-
+    
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -73,8 +71,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         }
         return false
     }
+    
     // MARK: - Core Data stack
-
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "org.steveschauer.PTFilmFest" in the application's documents Application Support directory.
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
@@ -123,7 +121,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }()
 
     // MARK: - Core Data Saving support
-
     func saveContext () {
         if let moc = self.managedObjectContext {
             var error: NSError? = nil
@@ -137,94 +134,212 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
     
     // MARK: database creation
-    func eventForName(name:String) -> Event {
+    func getToken() {
+        var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        var session = NSURLSession(configuration: configuration)
+        var email = "patmcfaul@itdevices.com"
+        var password = ""
+        let params:[String: AnyObject] = [
+            "email" : email,
+            "password" : password ]
+        
+        let url = NSURL(string:"https://api.ptffportal.org/v0/tokens")
+        let request = NSMutableURLRequest(URL: url!)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        var err: NSError?
+        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions.allZeros, error: &err)
+        
+        let task = session.dataTaskWithRequest(request) {
+            data, response, error in
+            
+            if let httpResponse = response as? NSHTTPURLResponse {
+                if httpResponse.statusCode != 200 {
+                    println("response was not 200: \(response)")
+                    return
+                }
+            }
+            if (error != nil) {
+                println("error submitting request: \(error)")
+                return
+            }
+            
+            self.token = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+            //println(self.token)
+        }
+        task.resume()
+    }
+    
+    func shouldUpdateFestivalData() -> Bool {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let currentTimeStamp = defaults.doubleForKey("timeStamp")
+
+        if let url  = NSURL(string: "https://api.ptffportal.org/v0/ss/timestamp") {
+            
+            // this blocks - sorry. Call the cops or something
+            var data = NSData(contentsOfURL: url)!
+            
+            var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+            
+            if let newTimeStamp = result?["timestamp"] as? Double {
+                defaults.setDouble(newTimeStamp, forKey: "timeStamp")
+                return newTimeStamp > currentTimeStamp
+            }
+        }
+        return false
+    }
+    
+    func getFestivalData() {
+        
+        // stop fetchedResultsController updates while we are working
+        self.controller!.suspendUpdates = true
+        
+        // TODO: get the token
+        
+        let task = NSURLSession.sharedSession().dataTaskWithURL(NSURL(string: "https://api.ptffportal.org/v0/ss/festival")!) {
+            data, response, error in
+            
+            if let httpResponse = response as? NSHTTPURLResponse {
+                if httpResponse.statusCode != 200 {
+                    self.controller!.suspendUpdates = false
+                    println("response was not 200: \(response)")
+                    return
+                }
+            }
+            if (error != nil) {
+                println("error submitting request: \(error)")
+                self.controller!.suspendUpdates = false
+                return
+            }
+            
+            var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+            //println(result!["festival"]!["theatres"])
+            if let venues = result!["festival"]!["theatres"] as? Dictionary<String,Dictionary<String,String>> {
+                self.parseVenues(venues)
+            }
+            
+            if let events = result!["festival"]!["films"] as? Dictionary<String,Dictionary<String,String>> {
+                self.parseEvents(events)
+            }
+            
+            if let scheduleItems = result!["festival"]!["festivalDays"] as? Array<Dictionary<String,AnyObject>> {
+                self.parseScheduleItems(scheduleItems)
+            }
+            
+            self.controller!.suspendUpdates = false
+            
+            NSNotificationCenter.defaultCenter().postNotificationName("updateFestivalDataComplete", object: nil)
+            self.saveContext()
+        }
+        task.resume()
+    }
+    
+    func parseVenues(venueData:Dictionary<String,Dictionary<String,String>>) {
+        let context = self.managedObjectContext!;
+        
+        for (name,details) in venueData {
+            var venue = NSEntityDescription.insertNewObjectForEntityForName("Venue", inManagedObjectContext: context) as! Venue
+            venue.name = name
+            venue.address = details["address"]!
+            venue.title = details["name"]!
+            var geocoder = CLGeocoder()
+            geocoder.geocodeAddressString("\(venue.address), Port Townsend, WA, USA", completionHandler: {(placemarks: [AnyObject]!, error: NSError!) -> Void in
+                if let placemark = placemarks?[0] as? CLPlacemark {
+                    venue.latitude = placemark.location.coordinate.latitude
+                    venue.longitude = placemark.location.coordinate.longitude
+                }
+            })
+        }
+    }
+    
+    func parseEvents(eventData:Dictionary<String,Dictionary<String,String>>) {
+        let context = self.managedObjectContext!;
+        
+        for (name,details) in eventData {
+            var event = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context) as! Event
+            
+            event.name = name
+            event.title = details["title"]!
+            event.runTime  = details["runtime"]!
+            event.bodyText = details["description"]!
+            event.director = details["director"]!
+            event.country = details["country"]!
+            event.year = details["year"]!
+            event.webSite = details["website"]!
+            event.imageURLString = details["imageUrl"]!
+            if let url  = NSURL(string: event.imageURLString) {
+                println("loading an image")
+                event.imageData = NSData(contentsOfURL: url)!
+                println("done loading an image")
+            }
+        }
+    }
+    
+    func eventForName(name:String) -> Event? {
         let context = self.managedObjectContext!;
         
         var fetchRequest = NSFetchRequest(entityName: "Event")
         fetchRequest.predicate = NSPredicate(format: "name CONTAINS[c] %@", name)
-
+        
         let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [Event]
-        return fetchResults![0];
+        if fetchResults?.count  > 0 {
+            return fetchResults![0];
+        }
+        return nil;
     }
     
-    func venueForName(name:String) -> Venue {
+    func venueForName(name:String) -> Venue? {
         let context = self.managedObjectContext!;
         
         var fetchRequest = NSFetchRequest(entityName: "Venue")
         fetchRequest.predicate = NSPredicate(format: "name CONTAINS[c] %@", name)
         
         let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [Venue]
-        return fetchResults![0];
+        if fetchResults?.count  > 0 {
+            return fetchResults![0];
+        }
+        return nil;
     }
     
-    func loadDataFromJSON() {
-        
+    func parseScheduleItems(scheduleData:Array<Dictionary<String,AnyObject>>) {
         let context = self.managedObjectContext!;
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
-
-        // first do the venues
-        if let path = NSBundle.mainBundle().pathForResource("Venues", ofType: "json") {
-            if let data = NSData(contentsOfFile: path, options:NSDataReadingOptions.DataReadingMappedIfSafe, error:nil) {
-                var venuesArray: NSArray = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSArray
-                println(venuesArray)
-                for i in 0..<venuesArray.count {
-                    let dictionary = venuesArray[i] as! Dictionary<String, String>
-                    println(dictionary)
-                    var venue = NSEntityDescription.insertNewObjectForEntityForName("Venue", inManagedObjectContext: context) as! Venue
-                    
-                    venue.name = dictionary["name"]!
-                    venue.title = dictionary["title"]!
-                    venue.address = dictionary["address"]!
-                    venue.webSite = dictionary["webSite"]!
-                    venue.latitude = NSNumberFormatter().numberFromString(dictionary["latitude"]!)!.floatValue
-                    venue.longitude = NSNumberFormatter().numberFromString(dictionary["longitude"]!)!.floatValue
-                    venue.bodyText = dictionary["bodyText"]!
-                }
-                saveContext()
-            }
-        }
-
-        // then the events
-        if let path = NSBundle.mainBundle().pathForResource("Events", ofType: "json") {
-            if let data = NSData(contentsOfFile: path, options:NSDataReadingOptions.DataReadingMappedIfSafe, error:nil) {
-                var eventsArray: NSArray = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSArray
-                println(eventsArray)
-                for i in 0..<eventsArray.count {
-                    let dictionary = eventsArray[i] as! Dictionary<String, String>
-                    println(dictionary)
-                    var event = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context) as! Event
-                    
-                    event.name = dictionary["name"]!
-                    event.title = dictionary["title"]!
-                    event.director = dictionary["director"]!
-                    event.webSite = dictionary["webSite"]!
-                    event.bodyText = dictionary["bodyText"]!
-                    event.type = dictionary["type"]!
-                }
-                saveContext()
-            }
-        }
         
-        // finally the items
-        if let path = NSBundle.mainBundle().pathForResource("Items", ofType: "json") {
-            if let data = NSData(contentsOfFile: path, options:NSDataReadingOptions.DataReadingMappedIfSafe, error:nil) {
-                var itemsArray: NSArray = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSArray
-                println(itemsArray)
-                for i in 0..<itemsArray.count {
-                    let dictionary = itemsArray[i] as! Dictionary<String, String>
-                    println(dictionary)
+        for festivalDay in scheduleData {
+            let year = festivalDay["year"] as! NSNumber
+            let month = festivalDay["month"]  as! NSNumber
+            let day = festivalDay["day"]  as! NSNumber
+            let dd = day.integerValue
+            let dayOfWeek = festivalDay["dayOfWeek"]  as! String
+            println(dayOfWeek)
+            if let showings = festivalDay["showings"] as? Array<Dictionary<String,AnyObject>> {
+                for showing in showings {
+                    let filmId = showing["filmId"] as! String
+                    let screeningWithFilmId = showing["screeningWithFilmId"] as! String
+                    let theatreId = showing["theatreId"] as! String
+                    
+                    let dateFormatter = NSDateFormatter()
+                    dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
+                    var showTime = showing["showTime"] as? String
+                    if showTime == "9:00" {
+                        showTime = "09:00"
+                    }
+                    let dateString = "09/\(dd)/2015 \(showTime!):00"
+
                     var item = NSEntityDescription.insertNewObjectForEntityForName("ScheduleItem", inManagedObjectContext: context) as! ScheduleItem
                     
-                    item.date = dateFormatter.dateFromString(dictionary["date"]!)!
-                    item.day = dictionary["day"]!
-                    item.event = eventForName(dictionary["event"]!)
-                    item.venue = venueForName(dictionary["venue"]!)
+                    item.date = dateFormatter.dateFromString(dateString)!
+                    item.day = dayOfWeek
+                    if let event = eventForName(filmId), let venue = venueForName(theatreId) {
+                        item.event = event
+                        item.venue = venue
+                        println("item to save: event.name: \(item.event!.name) venue name: \(item.venue!.name) date: \(dateString)")
+                    } else {
+                        println("didn't find \(filmId) or \(theatreId)")
+                    }
+                    //
                 }
-                saveContext()
             }
         }
     }
-
+    
 }
-

@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92464CAC1B94BF86006727E7 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92464CAB1B94BF86006727E7 /* DataSource.swift */; };
+		92464CB01B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 92464CAF1B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg */; };
+		92464CB21B94E773006727E7 /* UpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92464CB11B94E773006727E7 /* UpdateViewController.swift */; };
+		92464CB41B950CE9006727E7 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92464CB31B950CE9006727E7 /* WebViewController.swift */; };
+		92633AD01B939FBE00C4DADD /* Venue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92633ACF1B939FBE00C4DADD /* Venue.swift */; };
+		92633AD21B939FBF00C4DADD /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92633AD11B939FBF00C4DADD /* Event.swift */; };
+		92633AD41B93A1E000C4DADD /* ScheduleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92633AD31B93A1E000C4DADD /* ScheduleItem.swift */; };
 		92E0D0141B74FDE9006B587F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0131B74FDE9006B587F /* AppDelegate.swift */; };
 		92E0D0171B74FDE9006B587F /* PTFilmFest.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0151B74FDE9006B587F /* PTFilmFest.xcdatamodeld */; };
 		92E0D0191B74FDE9006B587F /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0181B74FDE9006B587F /* MasterViewController.swift */; };
@@ -24,9 +31,6 @@
 		92E0D0491B7503A2006B587F /* Events.json in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D0461B7503A2006B587F /* Events.json */; };
 		92E0D04A1B7503A2006B587F /* Items.json in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D0471B7503A2006B587F /* Items.json */; };
 		92E0D04B1B7503A2006B587F /* Venues.json in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D0481B7503A2006B587F /* Venues.json */; };
-		92E0D0501B7503B1006B587F /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D04D1B7503B1006B587F /* Event.swift */; };
-		92E0D0511B7503B1006B587F /* ScheduleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D04E1B7503B1006B587F /* ScheduleItem.swift */; };
-		92E0D0521B7503B1006B587F /* Venue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D04F1B7503B1006B587F /* Venue.swift */; };
 		92E0D0541B7503E5006B587F /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0531B7503E5006B587F /* TableViewCell.swift */; };
 		92E0D05D1B754AE3006B587F /* mapGlyph.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D05B1B754AE3006B587F /* mapGlyph.png */; };
 		92E0D05E1B754AE3006B587F /* mapGlyph@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */; };
@@ -46,6 +50,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		92464CAB1B94BF86006727E7 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
+		92464CAF1B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Born_to_the_West_(1937)_1.jpg"; sourceTree = "<group>"; };
+		92464CB11B94E773006727E7 /* UpdateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateViewController.swift; sourceTree = "<group>"; };
+		92464CB31B950CE9006727E7 /* WebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		92633ACF1B939FBE00C4DADD /* Venue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Venue.swift; sourceTree = "<group>"; };
+		92633AD11B939FBF00C4DADD /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		92633AD31B93A1E000C4DADD /* ScheduleItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleItem.swift; sourceTree = "<group>"; };
 		92E0D00E1B74FDE9006B587F /* PTFilmFest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PTFilmFest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92E0D0121B74FDE9006B587F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		92E0D0131B74FDE9006B587F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -67,9 +78,6 @@
 		92E0D0461B7503A2006B587F /* Events.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Events.json; sourceTree = "<group>"; };
 		92E0D0471B7503A2006B587F /* Items.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Items.json; sourceTree = "<group>"; };
 		92E0D0481B7503A2006B587F /* Venues.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Venues.json; sourceTree = "<group>"; };
-		92E0D04D1B7503B1006B587F /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		92E0D04E1B7503B1006B587F /* ScheduleItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleItem.swift; sourceTree = "<group>"; };
-		92E0D04F1B7503B1006B587F /* Venue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Venue.swift; sourceTree = "<group>"; };
 		92E0D0531B7503E5006B587F /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		92E0D05B1B754AE3006B587F /* mapGlyph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mapGlyph.png; sourceTree = "<group>"; };
 		92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mapGlyph@2x.png"; sourceTree = "<group>"; };
@@ -125,7 +133,10 @@
 				92E0D06F1B7D18F0006B587F /* Objective-C */,
 				92E0D0131B74FDE9006B587F /* AppDelegate.swift */,
 				92E0D0181B74FDE9006B587F /* MasterViewController.swift */,
+				92464CAB1B94BF86006727E7 /* DataSource.swift */,
 				92E0D01A1B74FDE9006B587F /* DetailViewController.swift */,
+				92464CB11B94E773006727E7 /* UpdateViewController.swift */,
+				92464CB31B950CE9006727E7 /* WebViewController.swift */,
 				92E0D0531B7503E5006B587F /* TableViewCell.swift */,
 				92E0D04C1B7503B1006B587F /* Model */,
 				92E0D0451B7503A2006B587F /* JSONData */,
@@ -191,9 +202,9 @@
 		92E0D04C1B7503B1006B587F /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				92E0D04F1B7503B1006B587F /* Venue.swift */,
-				92E0D04D1B7503B1006B587F /* Event.swift */,
-				92E0D04E1B7503B1006B587F /* ScheduleItem.swift */,
+				92633AD31B93A1E000C4DADD /* ScheduleItem.swift */,
+				92633AD11B939FBF00C4DADD /* Event.swift */,
+				92633ACF1B939FBE00C4DADD /* Venue.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -201,6 +212,7 @@
 		92E0D0551B754A06006B587F /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				92464CAF1B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg */,
 				92E0D05B1B754AE3006B587F /* mapGlyph.png */,
 				92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */,
 			);
@@ -306,6 +318,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92E0D0421B750380006B587F /* cream_small.png in Resources */,
+				92464CB01B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg in Resources */,
 				92E0D05D1B754AE3006B587F /* mapGlyph.png in Resources */,
 				92E0D04B1B7503A2006B587F /* Venues.json in Resources */,
 				92E0D01E1B74FDE9006B587F /* Main.storyboard in Resources */,
@@ -339,13 +352,16 @@
 				92E0D0141B74FDE9006B587F /* AppDelegate.swift in Sources */,
 				92E0D0541B7503E5006B587F /* TableViewCell.swift in Sources */,
 				92E0D0171B74FDE9006B587F /* PTFilmFest.xcdatamodeld in Sources */,
+				92633AD41B93A1E000C4DADD /* ScheduleItem.swift in Sources */,
 				92E0D0191B74FDE9006B587F /* MasterViewController.swift in Sources */,
+				92633AD21B939FBF00C4DADD /* Event.swift in Sources */,
+				92633AD01B939FBE00C4DADD /* Venue.swift in Sources */,
 				92E0D0651B7D13F4006B587F /* CircleSpinnerView.m in Sources */,
-				92E0D0521B7503B1006B587F /* Venue.swift in Sources */,
 				92E0D0661B7D13F4006B587F /* LikeButton.m in Sources */,
-				92E0D0511B7503B1006B587F /* ScheduleItem.swift in Sources */,
+				92464CAC1B94BF86006727E7 /* DataSource.swift in Sources */,
 				92E0D01B1B74FDE9006B587F /* DetailViewController.swift in Sources */,
-				92E0D0501B7503B1006B587F /* Event.swift in Sources */,
+				92464CB41B950CE9006727E7 /* WebViewController.swift in Sources */,
+				92464CB21B94E773006727E7 /* UpdateViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,7 +14,7 @@ class ScheduleItem: NSManagedObject {
 
     @NSManaged var date: NSDate
     @NSManaged var day: String
-    @NSManaged var event: Event
-    @NSManaged var venue: Venue
+    @NSManaged var event: Event?
+    @NSManaged var venue: Venue?
 
 }

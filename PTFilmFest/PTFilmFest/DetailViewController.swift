@@ -102,12 +102,11 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         mapButton.layer.cornerRadius = 4.0
         
         venueNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
-        venueNameButton.titleLabel!.text = venue!.title
+        venueNameButton.setTitle(venue!.title, forState: UIControlState.Normal)
         
         title = event!.title
         
-        imageView.image = UIImage(named:"\(event!.name)_small")!
-        
+        imageView.image = UIImage(data: event!.imageData)
         
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "H:mm a"
@@ -117,12 +116,33 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         bodyTextLabel!.text = event!.bodyText
         
-        if event!.type == "1" {
-            println("Hey")
-        }
-        
         otherShowings()
     }
+    
+    // MARK: - Segues
+    
+    override func shouldPerformSegueWithIdentifier(identifier: String!, sender: AnyObject!) -> Bool {
+        if identifier == "showWebView" {
+            if item!.event!.webSite == "" {
+                return false
+            }
+        }
+        return true
+    }
+
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "showWebView" {
+            
+            let controller = segue.destinationViewController as! WebViewController
+            controller.urlString  = item!.event!.webSite
+            controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+            controller.navigationItem.leftItemsSupplementBackButton = true
+            controller.title = item!.event!.title
+        }
+        
+    }
+    
     
     // MARK: Map Functions
 
@@ -224,7 +244,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let context = self.managedObjectContext!;
         
         var fetchRequest = NSFetchRequest(entityName: "ScheduleItem")
-        fetchRequest.predicate = NSPredicate(format: "event == %@", self.item!.event)
+        fetchRequest.predicate = NSPredicate(format: "event == %@", self.item!.event!)
         
         let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [ScheduleItem]
         
