@@ -12,9 +12,11 @@ class UpdateViewController: UIViewController {
 
     @IBOutlet weak var activityView: UIActivityIndicatorView!
     @IBOutlet weak var mainImage: UIImageView!
+    var startTime:NSDate? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        startTime = NSDate()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -36,7 +38,12 @@ class UpdateViewController: UIViewController {
     }
     
     func updateCompleted(notification: NSNotification) {
-        sleep(1)
+        var now = NSDate()
+        var elapsedTime = now.timeIntervalSinceDate(startTime!)
+        while elapsedTime < 3.0 {
+            now = NSDate()
+            elapsedTime = now.timeIntervalSinceDate(startTime!)
+        }
         activityView.stopAnimating()
         NSNotificationCenter.defaultCenter().removeObserver(self) // Remove from all notifications being observed
         self.dismissViewControllerAnimated(true, completion: nil)

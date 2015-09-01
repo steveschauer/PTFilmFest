@@ -24,9 +24,11 @@ class MapPin : NSObject, MKAnnotation {
 
 class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
 
+    var item: ScheduleItem?
+    
     var managedObjectContext: NSManagedObjectContext? = nil
     var locationManager: CLLocationManager? = nil
-    var mapRect: CGRect? = nil
+    var fullMapRect: CGRect? = nil
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var dateAndTimeLabel: UILabel!
@@ -34,35 +36,8 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet weak var mapButton: UIButton!
     @IBOutlet var venueNameButton: UIButton!
     @IBOutlet weak var bodyTextLabel: UITextView!
-    @IBOutlet weak var testLabel: UILabel!
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var likeButton: LikeButton!
-    @IBAction func likeButtonPressed(sender: LikeButton) {
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW,
-            Int64(1 * Double(NSEC_PER_SEC)))
-        if likeButton.likeButtonState == LikeState.NotLiked {
-            likeButton.likeButtonState = LikeState.Liking
-            dispatch_after(delayTime, dispatch_get_main_queue()) {
-                self.likeButton.likeButtonState = LikeState.Liked
-            }
-        } else {
-            likeButton.likeButtonState = LikeState.Unliking
-            dispatch_after(delayTime, dispatch_get_main_queue()) {
-                self.likeButton.likeButtonState = LikeState.NotLiked
-            }
-        }
-    }
     
-    var item: ScheduleItem? // {
-//        didSet {
-//            // Update the view.
-//            self.configureView()
-//        }
-//    }
-
-    var event: Event?
-    var venue: Venue?
-
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
@@ -78,15 +53,12 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     override func viewWillAppear(animated: Bool) {
-
         super.viewWillAppear(animated);
-//        configureView()
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        mapRect = mapView.frame
-//        configureView()
+        fullMapRect = mapView.frame
     }
     
 //    override func viewWillLayoutSubviews() {
@@ -94,29 +66,33 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
 //    }
     
     func configureView() {
-        event = item!.event
-        venue = item!.venue
-        
-        mapButton.layer.borderWidth=1.0
-        mapButton.layer.borderColor=UIColor.lightGrayColor().CGColor
-        mapButton.layer.cornerRadius = 4.0
-        
-        venueNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
-        venueNameButton.setTitle(venue!.title, forState: UIControlState.Normal)
-        
-        title = event!.title
-        
-        imageView.image = UIImage(data: event!.imageData)
-        
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "H:mm a"
-        let dateString = dateFormatter.stringFromDate(item!.date)
-        dateAndTimeLabel!.text = "\(item!.day) \(dateString)"
-        eventDetailsLabel!.text = "\(event!.director)"
-        
-        bodyTextLabel!.text = event!.bodyText
-        
-        otherShowings()
+        if let item = item, let event = item.event, let venue = item.venue {
+            
+            mapButton.layer.borderWidth=1.0
+            mapButton.layer.borderColor=UIColor.lightGrayColor().CGColor
+            mapButton.layer.cornerRadius = 4.0
+            
+            bodyTextLabel.layer.borderWidth=1.0
+            bodyTextLabel.layer.borderColor=UIColor.lightGrayColor().CGColor
+            bodyTextLabel.layer.cornerRadius = 4.0
+            
+            venueNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
+            venueNameButton.setTitle(venue.title, forState: UIControlState.Normal)
+            
+            title = event.title
+            
+            imageView.image = UIImage(data: event.imageData)
+            
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "H:mm a"
+            let dateString = dateFormatter.stringFromDate(item.date)
+            dateAndTimeLabel!.text = "\(item.day) \(dateString)"
+            eventDetailsLabel!.text = "\(event.director)     \(event.country) \(event.year), \(event.runTime) minutes"
+            
+            bodyTextLabel!.text = event.bodyText
+            
+            otherShowings()
+        }
     }
     
     // MARK: - Segues
@@ -164,6 +140,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
 
     func handleTapGesture(sender: UITapGestureRecognizer) {
+        // animate mapView unZoom
         self.view.removeGestureRecognizer(sender)
         let endRect = mapButton.frame
         UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
@@ -177,8 +154,9 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     @IBAction func showMap(sender: UIButton) {
+        // animate mapView zoom
         configureMapView()
-        let endRect = mapRect!
+        let endRect = fullMapRect!
         mapView.frame = mapButton.frame
         mapView.hidden = false
         UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
@@ -198,18 +176,18 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         mapView.removeAnnotations(mapView.annotations)
         
-        let eventCoordinate = CLLocationCoordinate2DMake(venue!.latitude.doubleValue, venue!.longitude.doubleValue)
-        let annotation = MapPin.self.init(coordinate: eventCoordinate, title: venue!.title, subtitle: venue!.address)
+        let eventCoordinate = CLLocationCoordinate2DMake(item!.venue!.latitude.doubleValue, item!.venue!.longitude.doubleValue)
+        let annotation = MapPin.self.init(coordinate: eventCoordinate, title: item!.venue!.title, subtitle: item!.venue!.address)
         
         //3D Camera
-        let mapCamera = MKMapCamera()
-        mapCamera.centerCoordinate = eventCoordinate
-        mapCamera.pitch = 45;
-        mapCamera.altitude = 500;
-        mapCamera.heading = 45;
-        
-        //Set MKmapView camera property
-        self.mapView.camera = mapCamera;
+//        let mapCamera = MKMapCamera()
+//        mapCamera.centerCoordinate = eventCoordinate
+//        mapCamera.pitch = 45;
+//        mapCamera.altitude = 500;
+//        mapCamera.heading = 45;
+//        
+//        //Set MKmapView camera property
+//        self.mapView.camera = mapCamera;
         
         mapView.addAnnotation(annotation)
         mapView.selectAnnotation(annotation, animated: true)
@@ -220,7 +198,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         // set the region to show user and venue, if possible
         if let userLocation = mapView.userLocation.location {
             
-            let eventLocation = CLLocation(latitude:venue!.latitude.doubleValue, longitude: venue!.longitude.doubleValue)
+            let eventLocation = CLLocation(latitude:item!.venue!.latitude.doubleValue, longitude: item!.venue!.longitude.doubleValue)
 
             distance = userLocation.distanceFromLocation(eventLocation)
             
@@ -252,23 +230,13 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         return fetchResults;
     }
     
-    func eventForName(name:String) -> Event {
-        let context = self.managedObjectContext!;
-        
-        var fetchRequest = NSFetchRequest(entityName: "Event")
-        fetchRequest.predicate = NSPredicate(format: "name CONTAINS[c] %@", name)
-        
-        let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [Event]
-        return fetchResults![0];
-    }
-    
     // MARK: Share action
     
     @IBAction func shareAction(sender: UIBarButtonItem) {
         
         if let item: ScheduleItem = self.item {
-            event = self.item!.event
-            venue = self.item!.venue
+            let event = self.item!.event
+            let venue = self.item!.venue
             
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "H:mm a"

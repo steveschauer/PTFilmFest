@@ -33,16 +33,21 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         if appDelegate.shouldUpdateFestivalData() {
-            
             let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let vc : UpdateViewController = storyboard.instantiateViewControllerWithIdentifier("updateViewController") as! UpdateViewController
             self.presentViewController(vc, animated: true, completion: nil)
+        } else {
+            // on iPad, we need to kickstart the detailViewController
+            let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+            self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
+            performSegueWithIdentifier("showDetail", sender: self)
         }
     }
     
     func updateCompleted(notification: NSNotification) {
-        NSNotificationCenter.defaultCenter().removeObserver(self) // Remove from all notifications being observed
+        NSNotificationCenter.defaultCenter().removeObserver(self)
         self.tableView.reloadData()
+        performSegueWithIdentifier("showDetail", sender: self)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -53,13 +58,13 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
     }
-
+    
     // MARK: - Segues
-
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow() {
-            let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
+                let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
                 let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
                 controller.item = object
                 controller.managedObjectContext = self.managedObjectContext
@@ -219,6 +224,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         // In the simplest, most efficient, case, reload the table view.
         if suspendUpdates == false {
             self.tableView.reloadData()
+            // on iPad, we need to kickstart the detailViewController
+            let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+            self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
         }
     }
     

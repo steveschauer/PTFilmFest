@@ -29,8 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         controller = masterNavigationController.topViewController as? MasterViewController
         controller?.managedObjectContext = self.managedObjectContext
         
-        //getFestivalData()
-        
         return true
     }
     
@@ -165,7 +163,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             }
             
             self.token = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
-            //println(self.token)
         }
         task.resume()
     }
@@ -213,7 +210,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             }
             
             var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
-            //println(result!["festival"]!["theatres"])
+            
             if let venues = result!["festival"]!["theatres"] as? Dictionary<String,Dictionary<String,String>> {
                 self.parseVenues(venues)
             }
@@ -268,9 +265,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             event.webSite = details["website"]!
             event.imageURLString = details["imageUrl"]!
             if let url  = NSURL(string: event.imageURLString) {
-                println("loading an image")
                 event.imageData = NSData(contentsOfURL: url)!
-                println("done loading an image")
             }
         }
     }
@@ -310,7 +305,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             let day = festivalDay["day"]  as! NSNumber
             let dd = day.integerValue
             let dayOfWeek = festivalDay["dayOfWeek"]  as! String
-            println(dayOfWeek)
             if let showings = festivalDay["showings"] as? Array<Dictionary<String,AnyObject>> {
                 for showing in showings {
                     let filmId = showing["filmId"] as! String
@@ -332,14 +326,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                     if let event = eventForName(filmId), let venue = venueForName(theatreId) {
                         item.event = event
                         item.venue = venue
-                        println("item to save: event.name: \(item.event!.name) venue name: \(item.venue!.name) date: \(dateString)")
-                    } else {
-                        println("didn't find \(filmId) or \(theatreId)")
                     }
-                    //
                 }
             }
         }
     }
     
-}
+}  // end
