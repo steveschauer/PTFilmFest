@@ -32,7 +32,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateCompleted:", name:"updateFestivalDataComplete", object: nil)
         
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        if appDelegate.shouldUpdateFestivalData {
+        if appDelegate.didUpdateFestivalData == false {
             let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let vc : UpdateViewController = storyboard.instantiateViewControllerWithIdentifier("updateViewController") as! UpdateViewController
             self.presentViewController(vc, animated: true, completion: nil)
