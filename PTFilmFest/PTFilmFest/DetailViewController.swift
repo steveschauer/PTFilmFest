@@ -35,7 +35,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet weak var eventDetailsLabel: UILabel!
     @IBOutlet weak var mapButton: UIButton!
     @IBOutlet var venueNameButton: UIButton!
-    @IBOutlet weak var bodyTextLabel: UITextView!
+    @IBOutlet weak var bodyTextView: UITextView!
     @IBOutlet weak var mapView: MKMapView!
     
     // MARK: View Life Cycle
@@ -54,16 +54,13 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
+        bodyTextView.scrollRangeToVisible(NSMakeRange(0, 0))
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         fullMapRect = mapView.frame
     }
-    
-//    override func viewWillLayoutSubviews() {
-//        self.configureView()
-//    }
     
     func configureView() {
         if let item = item, let event = item.event, let venue = item.venue {
@@ -72,9 +69,11 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             mapButton.layer.borderColor=UIColor.lightGrayColor().CGColor
             mapButton.layer.cornerRadius = 4.0
             
-            bodyTextLabel.layer.borderWidth=1.0
-            bodyTextLabel.layer.borderColor=UIColor.lightGrayColor().CGColor
-            bodyTextLabel.layer.cornerRadius = 4.0
+            bodyTextView.layer.borderWidth=1.0
+            bodyTextView.layer.borderColor=UIColor.lightGrayColor().CGColor
+            bodyTextView.layer.cornerRadius = 4.0
+            bodyTextView.textContainerInset = UIEdgeInsetsMake(12.0, 12.0, 12.0, 12.0)
+            
             
             venueNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
             venueNameButton.setTitle(venue.title, forState: UIControlState.Normal)
@@ -89,7 +88,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             dateAndTimeLabel!.text = "\(item.day) \(dateString)"
             eventDetailsLabel!.text = "\(event.director)     \(event.country) \(event.year), \(event.runTime) minutes"
             
-            bodyTextLabel!.text = event.bodyText
+            bodyTextView.text = event.bodyText
             
             otherShowings()
         }
@@ -108,8 +107,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
 
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "showWebView" {
-            
+        if segue.identifier == "showWebView" {            
             let controller = segue.destinationViewController as! WebViewController
             controller.urlString  = item!.event!.webSite
             controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
@@ -232,6 +230,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     // MARK: Share action
     
+    @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBAction func shareAction(sender: UIBarButtonItem) {
         
         if let item: ScheduleItem = self.item {
@@ -241,17 +240,21 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "H:mm a"
             let dateString = dateFormatter.stringFromDate(item.date)
-            let textToShare = "\(event!.title) \(item.day) \(dateString)"
-            if let myWebsite = NSURL(string: "http://www.ptfilmfest.com/Festival/Program.html#\(event!.name)")
-            {
-                let objectsToShare = [textToShare, myWebsite]
-                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-                
-                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList, UIActivityTypeAssignToContact, UIActivityTypePostToFlickr, UIActivityTypeSaveToCameraRoll, UIActivityTypePostToVimeo, UIActivityTypePostToWeibo]
-                //
-                
-                self.presentViewController(activityVC, animated: true, completion: nil)
-            }
+            
+            let headline = "PTFilmFest 2015 - \(event!.title)"
+            let details = "\(item.day) \(dateString) at \(venue!.title)"
+            let image = UIImage(data: event!.imageData)!
+            let website = "\(event!.webSite)"
+            
+            let objectsToShare = [headline,details,website,image]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            
+            activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList, UIActivityTypeAssignToContact, UIActivityTypePostToFlickr, UIActivityTypeSaveToCameraRoll, UIActivityTypePostToVimeo, UIActivityTypePostToWeibo]
+            
+            activityVC.popoverPresentationController?.barButtonItem = shareButton
+            
+            self.presentViewController(activityVC, animated: true, completion: nil)
+            
         }
     }
     

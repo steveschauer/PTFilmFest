@@ -16,7 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     var window: UIWindow?
     var controller:MasterViewController?
-    var token:NSDictionary?
+    var token:String?
+    var didUpdateFestivalData = false
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
@@ -29,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         controller = masterNavigationController.topViewController as? MasterViewController
         controller?.managedObjectContext = self.managedObjectContext
         
+        getToken()
         return true
     }
     
@@ -133,102 +135,164 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     // MARK: database creation
     func getToken() {
-        var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-        var session = NSURLSession(configuration: configuration)
-        var email = "patmcfaul@itdevices.com"
-        var password = ""
-        let params:[String: AnyObject] = [
-            "email" : email,
-            "password" : password ]
+        var deviceId = UIDevice.currentDevice().identifierForVendor.UUIDString
+        println("deviceId = \(deviceId)")
         
-        let url = NSURL(string:"https://api.ptffportal.org/v0/tokens")
-        let request = NSMutableURLRequest(URL: url!)
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.HTTPMethod = "POST"
+        let body = [
+            "bundleId": "org.steveschauer.ptfilmfest",
+            "deviceId": deviceId
+        ]
+        
         var err: NSError?
-        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions.allZeros, error: &err)
+        let request = NSMutableURLRequest(URL: NSURL(string: "https://api.ptffportal.org/v0/ss/tokens")!)
+        request.HTTPMethod = "POST"
+        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(body, options: nil, error: &err)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
         
-        let task = session.dataTaskWithRequest(request) {
-            data, response, error in
-            
-            if let httpResponse = response as? NSHTTPURLResponse {
-                if httpResponse.statusCode != 200 {
-                    println("response was not 200: \(response)")
-                    return
-                }
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
+            if let dictionary = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary {
+                self.token = dictionary["token"] as? String
             }
-            if (error != nil) {
-                println("error submitting request: \(error)")
-                return
-            }
-            
-            self.token = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
-        }
+        })
         task.resume()
+
+//        var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+//        var session = NSURLSession(configuration: configuration)
+//        var email = "patmcfaul@itdevices.com"
+//        var password = ""
+//        let params:[String: AnyObject] = [
+//            "email" : email,
+//            "password" : password ]
+//        
+//        let url = NSURL(string:"https://api.ptffportal.org/v0/tokens")
+//        let request = NSMutableURLRequest(URL: url!)
+//        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+//        request.HTTPMethod = "POST"
+//        var err: NSError?
+//        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions.allZeros, error: &err)
+//        
+//        let task = session.dataTaskWithRequest(request) {
+//            data, response, error in
+//            
+//            if let httpResponse = response as? NSHTTPURLResponse {
+//                if httpResponse.statusCode != 200 {
+//                    println("response was not 200: \(response)")
+//                    return
+//                }
+//            }
+//            if (error != nil) {
+//                println("error submitting request: \(error)")
+//                return
+//            }
+//            
+//            self.token = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+//        }
+//        task.resume()
     }
     
-    func shouldUpdateFestivalData() -> Bool {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        let currentTimeStamp = defaults.doubleForKey("timeStamp")
-
-        if let url  = NSURL(string: "https://api.ptffportal.org/v0/ss/timestamp") {
-            
-            // this blocks - sorry. Call the cops or something
-            var data = NSData(contentsOfURL: url)!
-            
-            var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
-            
-            if let newTimeStamp = result?["timestamp"] as? Double {
-                defaults.setDouble(newTimeStamp, forKey: "timeStamp")
-                return newTimeStamp > currentTimeStamp
-            }
-        }
-        return false
-    }
+//    func getTimestamp() -> Void {
+//        let defaults = NSUserDefaults.standardUserDefaults()
+//        let currentTimeStamp = defaults.doubleForKey("timeStamp")
+//        var newTimeStamp:Double
+//        
+//        if let token = token {
+//            let request = NSMutableURLRequest(URL: NSURL(string: "https://api.ptffportal.org/v0/ss/timestamp")!)
+//            request.setValue("Bearer " + token, forHTTPHeaderField: "Authorization")
+//            let session = NSURLSession.sharedSession()
+//            let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
+//                var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+//                newTimeStamp = (result?["timestamp"] as? Double)!
+//            })
+//        }
+//        task.resume()
+//    }
+//    func shouldUpdateFestivalData() -> Bool {
+//        let defaults = NSUserDefaults.standardUserDefaults()
+//        let currentTimeStamp = defaults.doubleForKey("timeStamp")
+//        var newTimeStamp:Double
+//        
+//        
+//        if let token = token {
+//            let request = NSMutableURLRequest(URL: NSURL(string: "https://api.ptffportal.org/v0/ss/timestamp")!)
+//            request.setValue("Bearer " + token, forHTTPHeaderField: "Authorization")
+//            let session = NSURLSession.sharedSession()
+//            let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
+//                var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+//                newTimeStamp = (result?["timestamp"] as? Double)!
+//            })
+//        }
+//        return newTimeStamp > currentTimeStamp
+//        task.resume()
+//        
+//        //        if let url  = NSURL(string: "https://api.ptffportal.org/v0/ss/timestamp") {
+//        //
+//        //            // this blocks - sorry. Call the cops or something
+//        //            var data = NSData(contentsOfURL: url)!
+//        //
+//        //            var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+//        //            
+////            if let newTimeStamp = result?["timestamp"] as? Double {
+////                defaults.setDouble(newTimeStamp, forKey: "timeStamp")
+////                return newTimeStamp > currentTimeStamp
+////            }
+////        }
+////        return false
+////    }
     
     func getFestivalData() {
         
         // stop fetchedResultsController updates while we are working
         self.controller!.suspendUpdates = true
-        
-        // TODO: get the token
-        
-        let task = NSURLSession.sharedSession().dataTaskWithURL(NSURL(string: "https://api.ptffportal.org/v0/ss/festival")!) {
-            data, response, error in
-            
-            if let httpResponse = response as? NSHTTPURLResponse {
-                if httpResponse.statusCode != 200 {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let currentTimeStamp = defaults.doubleForKey("timeStamp")
+        var newTimeStamp:Double = 0
+        if let token = token {
+            let request = NSMutableURLRequest(URL: NSURL(string: "https://api.ptffportal.org/v0/ss/timestamp")!)
+            request.setValue("Bearer " + token, forHTTPHeaderField: "Authorization")
+            let session = NSURLSession.sharedSession()
+            let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
+                var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+                newTimeStamp = (result?["timestamp"] as? Double)!
+                defaults.setDouble(newTimeStamp, forKey: "timeStamp")
+            })
+            if newTimeStamp > currentTimeStamp {
+                let dataTask = NSURLSession.sharedSession().dataTaskWithURL(NSURL(string: "https://api.ptffportal.org/v0/ss/festival")!) {
+                    data, response, error in
+                    
+                    if let httpResponse = response as? NSHTTPURLResponse {
+                        if httpResponse.statusCode != 200 {
+                            self.controller!.suspendUpdates = false
+                            println("response was not 200: \(response)")
+                            return
+                        }
+                    }
+                    if (error != nil) {
+                        println("error submitting request: \(error)")
+                        self.controller!.suspendUpdates = false
+                        return
+                    }
+                    var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+                    if let venues = result!["festival"]!["theatres"] as? Dictionary<String,Dictionary<String,String>> {
+                        self.parseVenues(venues)
+                    }
+                    if let events = result!["festival"]!["films"] as? Dictionary<String,Dictionary<String,String>> {
+                        self.parseEvents(events)
+                    }
+                    if let scheduleItems = result!["festival"]!["festivalDays"] as? Array<Dictionary<String,AnyObject>> {
+                        self.parseScheduleItems(scheduleItems)
+                    }
                     self.controller!.suspendUpdates = false
-                    println("response was not 200: \(response)")
-                    return
+                    
+                    NSNotificationCenter.defaultCenter().postNotificationName("updateFestivalDataComplete", object: nil)
+                    self.saveContext()
+                    didUpdateFestivalData = true
                 }
+                dataTask.resume()
             }
-            if (error != nil) {
-                println("error submitting request: \(error)")
-                self.controller!.suspendUpdates = false
-                return
-            }
-            
-            var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
-            
-            if let venues = result!["festival"]!["theatres"] as? Dictionary<String,Dictionary<String,String>> {
-                self.parseVenues(venues)
-            }
-            
-            if let events = result!["festival"]!["films"] as? Dictionary<String,Dictionary<String,String>> {
-                self.parseEvents(events)
-            }
-            
-            if let scheduleItems = result!["festival"]!["festivalDays"] as? Array<Dictionary<String,AnyObject>> {
-                self.parseScheduleItems(scheduleItems)
-            }
-            
-            self.controller!.suspendUpdates = false
-            
-            NSNotificationCenter.defaultCenter().postNotificationName("updateFestivalDataComplete", object: nil)
-            self.saveContext()
+            task.resume()
         }
-        task.resume()
     }
     
     func parseVenues(venueData:Dictionary<String,Dictionary<String,String>>) {

@@ -32,11 +32,11 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateCompleted:", name:"updateFestivalDataComplete", object: nil)
         
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        if appDelegate.shouldUpdateFestivalData() {
+        if appDelegate.shouldUpdateFestivalData {
             let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let vc : UpdateViewController = storyboard.instantiateViewControllerWithIdentifier("updateViewController") as! UpdateViewController
             self.presentViewController(vc, animated: true, completion: nil)
-        } else {
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             // on iPad, we need to kickstart the detailViewController
             let indexPath = NSIndexPath(forRow: 0, inSection: 0)
             self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
@@ -47,7 +47,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     func updateCompleted(notification: NSNotification) {
         NSNotificationCenter.defaultCenter().removeObserver(self)
         self.tableView.reloadData()
-        performSegueWithIdentifier("showDetail", sender: self)
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            performSegueWithIdentifier("showDetail", sender: self)
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -110,7 +112,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let imageHeight =  9/16 * UIScreen.mainScreen().bounds.size.width
+        let imageHeight =  9/16 * self.view.frame.size.width //UIScreen.mainScreen().bounds.size.width
         return imageHeight
     }
 
@@ -225,8 +227,10 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         if suspendUpdates == false {
             self.tableView.reloadData()
             // on iPad, we need to kickstart the detailViewController
-            let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-            self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+                self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
+            }
         }
     }
     

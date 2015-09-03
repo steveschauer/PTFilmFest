@@ -33,7 +33,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="9pj-7b-PJC">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9pj-7b-PJC">
                                 <rect key="frame" x="-2" y="64" width="604" height="340"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="9pj-7b-PJC" secondAttribute="height" multiplier="151:85" id="SrE-CZ-Pai"/>
@@ -136,12 +136,13 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="bodyTextLabel" destination="Sme-35-9Xh" id="EMO-Z0-4KL"/>
+                        <outlet property="bodyTextView" destination="Sme-35-9Xh" id="1Ay-9j-0m6"/>
                         <outlet property="dateAndTimeLabel" destination="5bb-sb-GD3" id="M1N-Vy-ve6"/>
                         <outlet property="eventDetailsLabel" destination="qdV-fF-F8M" id="6Hc-FV-qo3"/>
                         <outlet property="imageView" destination="9pj-7b-PJC" id="2C1-XV-49r"/>
                         <outlet property="mapButton" destination="DnJ-nf-quM" id="Wea-5I-dsw"/>
                         <outlet property="mapView" destination="bSg-8g-M1R" id="AbO-88-c1b"/>
+                        <outlet property="shareButton" destination="hIB-47-Nxy" id="tcw-38-8e4"/>
                         <outlet property="venueNameButton" destination="QMf-gP-2qo" id="Asb-Qk-aJ6"/>
                     </connections>
                 </viewController>
