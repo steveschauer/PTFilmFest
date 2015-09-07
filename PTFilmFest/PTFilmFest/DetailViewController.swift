@@ -11,6 +11,7 @@ import CoreData
 import MapKit
 
 class MapPin : NSObject, MKAnnotation {
+    
     var coordinate: CLLocationCoordinate2D
     var title: String?
     var subtitle: String?
@@ -24,9 +25,9 @@ class MapPin : NSObject, MKAnnotation {
 
 class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
 
+    var masterVC: MasterViewController?
     var item: ScheduleItem?
     
-    var managedObjectContext: NSManagedObjectContext? = nil
     var locationManager: CLLocationManager? = nil
     var fullMapRect: CGRect? = nil
     
@@ -34,22 +35,37 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet weak var dateAndTimeLabel: UILabel!
     @IBOutlet weak var eventDetailsLabel: UILabel!
     @IBOutlet weak var mapButton: UIButton!
-    @IBOutlet var venueNameButton: UIButton!
+    @IBOutlet weak var venueNameButton: UIButton!
     @IBOutlet weak var bodyTextView: UITextView!
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var likeButton: UIButton!
+    
+    @IBAction func likeAction(sender: UIButton) {
+        if let item = item, let event = item.event {
+            if event.like == true {
+                let image = UIImage(named: "heart-empty.png") as UIImage!
+                likeButton.setBackgroundImage(image, forState: UIControlState.Normal)
+                event.like = false
+            } else {
+                let image = UIImage(named: "heart-full.png") as UIImage!
+                likeButton.setBackgroundImage(image, forState: UIControlState.Normal)
+                event.like = true
+            }
+            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            appDelegate.updateLike(event)
+            NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
+        }
+        
+    }
     
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBarHidden = false
+        
         mapView.hidden = true
-        
-        locationManager = CLLocationManager()
-        locationManager!.delegate = self
-        locationManager!.requestWhenInUseAuthorization()
-        
-        self.configureView()
+        configureView()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -59,6 +75,15 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        var swipeLeft = UISwipeGestureRecognizer(target: self, action: "handleSwipeLeft:")
+        swipeLeft.direction = .Left
+        view.addGestureRecognizer(swipeLeft)
+        
+        var swipeRight = UISwipeGestureRecognizer(target: self, action: "handleSwipeRight:")
+        swipeRight.direction = .Right
+        view.addGestureRecognizer(swipeRight)
+        
         fullMapRect = mapView.frame
     }
     
@@ -83,14 +108,23 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             imageView.image = UIImage(data: event.imageData)
             
             let dateFormatter = NSDateFormatter()
-            dateFormatter.dateFormat = "H:mm a"
+            dateFormatter.dateFormat = "h:mm a"
             let dateString = dateFormatter.stringFromDate(item.date)
             dateAndTimeLabel!.text = "\(item.day) \(dateString)"
             eventDetailsLabel!.text = "\(event.director)     \(event.country) \(event.year), \(event.runTime) minutes"
             
             bodyTextView.text = event.bodyText
             
-            otherShowings()
+           // likeButton.imageView!.image = event.like == true ? UIImage(named: "heart-full") : UIImage(named: "heart-empty")
+
+            if (event.like == true) {
+                let image = UIImage(named: "heart-full.png") as UIImage!
+                likeButton.setBackgroundImage(image, forState: UIControlState.Normal)
+            } else {
+                let image = UIImage(named: "heart-empty.png") as UIImage!
+                likeButton.setBackgroundImage(image, forState: UIControlState.Normal)
+            }
+            
         }
     }
     
@@ -110,7 +144,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         if segue.identifier == "showWebView" {            
             let controller = segue.destinationViewController as! WebViewController
             controller.urlString  = item!.event!.webSite
-            controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+            controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem()
             controller.navigationItem.leftItemsSupplementBackButton = true
             controller.title = item!.event!.title
         }
@@ -129,17 +163,44 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     func locationManager(manager: CLLocationManager,
         didFailWithError error: NSError) {
-            
-            if CLAuthorizationStatus.AuthorizedWhenInUse == CLLocationManager.authorizationStatus() {
-                println("we have status, so WTF?")
-            }
-
             println(error)
+    }
+
+    func handleSwipeLeft(sender: UISwipeGestureRecognizer) {
+        handleSwipeGesture(true)
+    }
+
+    func handleSwipeRight(sender: UISwipeGestureRecognizer) {
+        handleSwipeGesture(false)
+    }
+    func handleSwipeGesture(forward: Bool) {
+        if let newItem = masterVC?.moveToAdjacentItem(item, forward: forward) {
+//            view.alpha = 0.5
+//            UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
+//                view.alpha = 0.5
+//                self.item = newItem
+//                }, completion: {
+//                self.configureView()
+//                self.view.alpha = 1.0
+            //        })
+            
+//            view.alpha = 0.25
+//            UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: {
+                self.item = newItem
+                self.configureView()
+                self.view.alpha = 1.0
+//                }, completion:
+//                {
+//                    (value: Bool) in
+//                   // self.view.alpha = 1.0
+//            })
+            
+        }
     }
 
     func handleTapGesture(sender: UITapGestureRecognizer) {
         // animate mapView unZoom
-        self.view.removeGestureRecognizer(sender)
+        view.removeGestureRecognizer(sender)
         let endRect = mapButton.frame
         UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             self.mapView.frame = endRect
@@ -167,6 +228,10 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     func configureMapView() {
         
+        locationManager = CLLocationManager()
+        locationManager!.delegate = self
+        locationManager!.requestWhenInUseAuthorization()
+        
         mapView.delegate = self
         mapView.showsUserLocation = true
         mapView.clipsToBounds = true
@@ -176,16 +241,6 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         let eventCoordinate = CLLocationCoordinate2DMake(item!.venue!.latitude.doubleValue, item!.venue!.longitude.doubleValue)
         let annotation = MapPin.self.init(coordinate: eventCoordinate, title: item!.venue!.title, subtitle: item!.venue!.address)
-        
-        //3D Camera
-//        let mapCamera = MKMapCamera()
-//        mapCamera.centerCoordinate = eventCoordinate
-//        mapCamera.pitch = 45;
-//        mapCamera.altitude = 500;
-//        mapCamera.heading = 45;
-//        
-//        //Set MKmapView camera property
-//        self.mapView.camera = mapCamera;
         
         mapView.addAnnotation(annotation)
         mapView.selectAnnotation(annotation, animated: true)
@@ -215,27 +270,14 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         mapView.setRegion(adjustedRegion, animated:true)
     }
     
-    func otherShowings() -> Array<ScheduleItem>? {
-        
-        let context = self.managedObjectContext!;
-        
-        var fetchRequest = NSFetchRequest(entityName: "ScheduleItem")
-        fetchRequest.predicate = NSPredicate(format: "event == %@", self.item!.event!)
-        
-        let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [ScheduleItem]
-        
-        // filter self.item out, and then,
-        return fetchResults;
-    }
-    
     // MARK: Share action
     
     @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBAction func shareAction(sender: UIBarButtonItem) {
         
-        if let item: ScheduleItem = self.item {
-            let event = self.item!.event
-            let venue = self.item!.venue
+        if let item: ScheduleItem = item {
+            let event = item.event
+            let venue = item.venue
             
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "H:mm a"
@@ -253,7 +295,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             
             activityVC.popoverPresentationController?.barButtonItem = shareButton
             
-            self.presentViewController(activityVC, animated: true, completion: nil)
+            presentViewController(activityVC, animated: true, completion: nil)
             
         }
     }

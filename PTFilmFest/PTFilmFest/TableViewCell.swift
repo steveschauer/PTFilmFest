@@ -13,6 +13,7 @@ class TableViewCell: UITableViewCell {
     @IBOutlet weak var imageViewForCell: UIImageView!
     @IBOutlet weak var eventTitleLabel: UILabel!
     @IBOutlet weak var timeAndVenueLabel: UILabel!
+    @IBOutlet weak var likeImageView: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -23,5 +23,6 @@ class Event: NSManagedObject {
     @NSManaged var imageData: NSData
     @NSManaged var country: String
     @NSManaged var scheduleItem: NSSet
+    @NSManaged var like: Bool
 
 }

@@ -16,20 +16,43 @@ class UpdateViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        startTime = NSDate()
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            switch UIDevice.currentDevice().orientation{
+            case .Portrait:
+                mainImage.image = UIImage(named:"Born_to_the_West_(1937)_Portrait.jpg")
+            case .PortraitUpsideDown:
+                mainImage.image = UIImage(named:"Born_to_the_West_(1937)_Portrait.jpg")
+            case .LandscapeLeft:
+                mainImage.image = UIImage(named:"Born_to_the_West_(1937).jpg")
+            case .LandscapeRight:
+                mainImage.image = UIImage(named:"Born_to_the_West_(1937).jpg")
+            default:
+                mainImage.image = UIImage(named:"Born_to_the_West_(1937).jpg")
+            }
+
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        startTime = NSDate()
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         activityView.startAnimating()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateCompleted:", name:"updateFestivalDataComplete", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateCompleted:", name:"updateTableView", object: nil)
         appDelegate.getFestivalData()
     }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        activityView.stopAnimating()
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -38,26 +61,21 @@ class UpdateViewController: UIViewController {
     }
     
     func updateCompleted(notification: NSNotification) {
+        
+        // make the view stay up for a minimum amount of time
         var now = NSDate()
         var elapsedTime = now.timeIntervalSinceDate(startTime!)
-        while elapsedTime < 3.0 {
-            now = NSDate()
-            elapsedTime = now.timeIntervalSinceDate(startTime!)
+        if elapsedTime < 3 {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(3 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+                self.activityView.stopAnimating()
+                NSNotificationCenter.defaultCenter().removeObserver(self)
+                self.dismissViewControllerAnimated(true, completion: nil)
+            }
+        } else {
+            self.activityView.stopAnimating()
+            NSNotificationCenter.defaultCenter().removeObserver(self)
+            self.dismissViewControllerAnimated(true, completion: nil)
         }
-        activityView.stopAnimating()
-        NSNotificationCenter.defaultCenter().removeObserver(self) // Remove from all notifications being observed
-        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -18,86 +18,100 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.preferredContentSize = CGSize(width: 320.0, height: 9/16 * 320)
+        preferredContentSize = CGSize(width: 320.0, height: 9/16 * 320)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateTableView:", name:"updateTableView", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "checkForUpdates:", name:"checkForUpdates", object: nil)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "PTFilmFest"
-        if let split = self.splitViewController {
+        navigationController?.navigationBarHidden = true
+        
+        title = "PTFilmFest"
+        if let split = splitViewController {
             let controllers = split.viewControllers
-            self.detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
-        }
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateCompleted:", name:"updateFestivalDataComplete", object: nil)
-        
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        if appDelegate.didUpdateFestivalData == false {
-            let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc : UpdateViewController = storyboard.instantiateViewControllerWithIdentifier("updateViewController") as! UpdateViewController
-            self.presentViewController(vc, animated: true, completion: nil)
-        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            // on iPad, we need to kickstart the detailViewController
-            let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-            self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
-            performSegueWithIdentifier("showDetail", sender: self)
+            detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
         }
     }
     
-    func updateCompleted(notification: NSNotification) {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-        self.tableView.reloadData()
+    func checkForUpdates(notification:NSNotification) {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
+        let now = NSDate()
+        var shouldUpdate = true
+        
+        if let lastCheckedString = defaults.stringForKey("lastCheckedString"), let lastCheckedTime = dateFormatter.dateFromString(lastCheckedString) {
+            let elapsedTime = now.timeIntervalSinceDate(lastCheckedTime)
+            shouldUpdate = elapsedTime > (60 * 60 * 2)
+        }
+        
+        if shouldUpdate == true {
+            let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc : UpdateViewController = storyboard.instantiateViewControllerWithIdentifier("updateViewController") as! UpdateViewController
+            presentViewController(vc, animated: true, completion: nil)
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            // on iPad, we need to kickstart the detailViewController
+            let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+            tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
+            performSegueWithIdentifier("showDetail", sender: self)
+        }
+        
+        defaults.setObject(dateFormatter.stringFromDate(now), forKey:"lastCheckedString")
+    }
+    
+    func updateTableView(notification: NSNotification) {
+        tableView.reloadData()
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             performSegueWithIdentifier("showDetail", sender: self)
         }
     }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBarHidden = true
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-    }
+
     
     // MARK: - Segues
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = self.tableView.indexPathForSelectedRow() {
-                let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
-                let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
-                controller.item = object
-                controller.managedObjectContext = self.managedObjectContext
-                controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
-                controller.navigationItem.leftItemsSupplementBackButton = true
-                self.title = ""
+            var indexPath = tableView.indexPathForSelectedRow()
+            
+            // more iPad funnyness
+            if indexPath == nil {
+                indexPath = NSIndexPath(forRow: 0, inSection: 0)
+                tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
             }
+            
+            let object = fetchedResultsController.objectAtIndexPath(indexPath!) as! ScheduleItem
+            let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
+            controller.item = object
+            controller.masterVC = self
+            controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem()
+            controller.navigationItem.leftItemsSupplementBackButton = true
+            title = ""
         }
     }
-
+    
     // MARK: - Table View
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return self.fetchedResultsController.sections?.count ?? 0
+        return fetchedResultsController.sections?.count ?? 0
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let sectionInfo = self.fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
+        let sectionInfo = fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
         return sectionInfo.numberOfObjects
     }
 
     
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         var headerView=UIView(frame: CGRectMake(0, 0, tableView.bounds.size.width, 30))
-        headerView.backgroundColor = UIColor.lightGrayColor()
+        headerView.backgroundColor = UIColor.whiteColor()
         headerView.alpha = 0.9
         var label = UILabel(frame:CGRectMake(10, 3, tableView.bounds.size.width - 10, 18))
         label.text = self.tableView(tableView, titleForHeaderInSection: section)
         label.font = UIFont(name:"Helvetice Neue", size:16.0)
         label.backgroundColor = UIColor.clearColor()
-        label.textColor = UIColor.whiteColor()
+        label.textColor = UIColor.blackColor()
         headerView.addSubview(label)
         return headerView
     }
@@ -105,14 +119,25 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if let sections = fetchedResultsController.sections {
             let currentSection = sections[section] as! NSFetchedResultsSectionInfo
-            let title = "PT Film Fest - \(currentSection.name!)"
+            var title = "PT Film Festival"
+            var day = currentSection.name!
+            switch currentSection.name! {
+            case "Friday":
+                title = "\(title) - \(day) Sept. 25"
+            case "Saturday":
+                title = "\(title) - \(day) Sept. 26"
+            case "Sunday":
+                title = "\(title) - \(day) Sept. 27"
+            default:
+                title = "\(title) - \(day)"
+            }
             return title
             }
         return nil
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let imageHeight =  9/16 * self.view.frame.size.width //UIScreen.mainScreen().bounds.size.width
+        let imageHeight =  9/16 * view.frame.size.width //UIScreen.mainScreen().bounds.size.width
         return imageHeight
     }
 
@@ -124,31 +149,79 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! TableViewCell
-        self.configureCell(cell, atIndexPath: indexPath)
+        configureCell(cell, atIndexPath: indexPath)
         return cell
     }
     
     
     func configureCell(cell: TableViewCell, atIndexPath indexPath: NSIndexPath) {
         
-        let item:ScheduleItem = self.fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
+        let item:ScheduleItem = fetchedResultsController.objectAtIndexPath(indexPath) as! ScheduleItem
         
         let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "H:mm a"
+        dateFormatter.dateFormat = "h:mm a"
         let dateString = dateFormatter.stringFromDate(item.date)
         
         if let event = item.event {
-        let venue = item.venue
-        
-        cell.imageViewForCell.image = UIImage(data: event.imageData)//UIImage(named:"\(item.event.name)_small")
-        cell.eventTitleLabel.text = event.title
-        cell.timeAndVenueLabel.text = "\(dateString) \(venue!.title)"
+            let venue = item.venue
+            
+            cell.imageViewForCell.image = UIImage(data: event.imageData)//UIImage(named:"\(item.event.name)_small")
+            cell.eventTitleLabel.text = event.title
+            cell.timeAndVenueLabel.text = "\(dateString) \(venue!.title)"
+            
+            cell.likeImageView.image = event.like == true ? UIImage(named: "heart-full") : UIImage(named: "heart-empty")
+//            if (event.like == true) {
+//                let image = UIImage(named: "heart-full.png") as UIImage!
+//                cell.likeImageView.setImage(image, forState: UIControlState.Normal)
+//            } else {
+//                cell.likeImageView.image = UIImage(named:"heart-empty")
+//            }
         }
         
     }
     
-    // MARK: - Fetched results controller
+    func moveToAdjacentItem(item: ScheduleItem?, forward: Bool) -> ScheduleItem? {
+        if let indexPath = tableView.indexPathForSelectedRow() {
+            
+            var newIndexPath:NSIndexPath = indexPath  // assignment is to keep the compiler quiet only
+
+            var sectionCount = tableView.numberOfSections()
+            var rowsInSection = tableView.numberOfRowsInSection(indexPath.section)
+            
+            if (forward) {
+                if indexPath.row == rowsInSection-1 {
+                    if indexPath.section == sectionCount-1 {
+                        return nil
+                    } else {
+                        newIndexPath = NSIndexPath(forRow: 0, inSection:indexPath.section+1)
+                    }
+                } else {
+                    newIndexPath = NSIndexPath(forRow: indexPath.row+1, inSection:indexPath.section)
+                }
+            } else {
+                if indexPath.section == 0 && indexPath.row == 0 {
+                    return nil
+                } else {
+                    if indexPath.row == 0 {
+                        rowsInSection = tableView.numberOfRowsInSection(indexPath.section-1)
+                        newIndexPath = NSIndexPath(forRow: rowsInSection-1, inSection:indexPath.section-1)
+                    } else {
+                        newIndexPath = NSIndexPath(forRow: indexPath.row-1, inSection:indexPath.section)
+                    }
+                }
+            }
+            
+            if let currentItem = fetchedResultsController.objectAtIndexPath(newIndexPath) as? ScheduleItem {
+                tableView.selectRowAtIndexPath(newIndexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
+                return currentItem
+            }
+            
+        }
+        return nil
+    }
     
+    // MARK: - Fetched results controller
+
     var fetchedResultsController: NSFetchedResultsController {
         
         if _fetchedResultsController != nil {
@@ -156,22 +229,17 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         }
         
         let fetchRequest = NSFetchRequest()
-        // Edit the entity name as appropriate.
-        let entity = NSEntityDescription.entityForName("ScheduleItem", inManagedObjectContext: self.managedObjectContext!)
+        let entity = NSEntityDescription.entityForName("ScheduleItem", inManagedObjectContext: managedObjectContext!)
         fetchRequest.entity = entity
         
-        // Set the batch size to a suitable number.
         fetchRequest.fetchBatchSize = 20
         
-        // Edit the sort key as appropriate.
         let sortDescriptor1 = NSSortDescriptor(key: "date", ascending: true)
-        //let sortDescriptor2 = NSSortDescriptor(key: "venue", ascending: true)
-        //let sortDescriptor3 = NSSortDescriptor(key: "event.type", ascending: true)
         let sortDescriptors = [sortDescriptor1]
         
         fetchRequest.sortDescriptors = sortDescriptors
         
-        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: "day", cacheName: "Master")
+        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedObjectContext!, sectionNameKeyPath: "day", cacheName: "Master")
         aFetchedResultsController.delegate = self
         _fetchedResultsController = aFetchedResultsController
         
@@ -185,15 +253,15 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     var _fetchedResultsController: NSFetchedResultsController? = nil
 
 //    func controllerWillChangeContent(controller: NSFetchedResultsController) {
-//        self.tableView.beginUpdates()
+//        tableView.beginUpdates()
 //    }
 //
 //    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
 //        switch type {
 //            case .Insert:
-//                self.tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+//                tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
 //            case .Delete:
-//                self.tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+//                tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
 //            default:
 //                return
 //        }
@@ -206,7 +274,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 //            case .Delete:
 //                tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
 //            case .Update:
-//                self.configureCell(tableView.cellForRowAtIndexPath(indexPath!)! as! TableViewCell, atIndexPath: indexPath!)
+//                configureCell(tableView.cellForRowAtIndexPath(indexPath!)! as! TableViewCell, atIndexPath: indexPath!)
 //            case .Move:
 //                tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
 //                tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
@@ -216,20 +284,19 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 //    }
 //
 //    func controllerDidChangeContent(controller: NSFetchedResultsController) {
-//        self.tableView.endUpdates()
+//        tableView.endUpdates()
 //    }
 
     
     // Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed.
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        // In the simplest, most efficient, case, reload the table view.
         if suspendUpdates == false {
-            self.tableView.reloadData()
+            tableView.reloadData()
             // on iPad, we need to kickstart the detailViewController
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-                self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
+                tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
             }
         }
     }

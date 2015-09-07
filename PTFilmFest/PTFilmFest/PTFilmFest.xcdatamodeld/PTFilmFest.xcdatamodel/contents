@@ -6,6 +6,7 @@
         <attribute name="director" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="imageData" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="imageURLString" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="like" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="runTime" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
@@ -29,7 +30,7 @@
         <relationship name="scheduleItem" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScheduleItem" inverseName="venue" inverseEntity="ScheduleItem" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Event" positionX="342" positionY="-234" width="128" height="210"/>
+        <element name="Event" positionX="342" positionY="-234" width="128" height="225"/>
         <element name="ScheduleItem" positionX="655" positionY="207" width="128" height="103"/>
         <element name="Venue" positionX="261" positionY="234" width="128" height="133"/>
     </elements>

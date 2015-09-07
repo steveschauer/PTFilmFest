@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		92464CAC1B94BF86006727E7 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92464CAB1B94BF86006727E7 /* DataSource.swift */; };
 		92464CB01B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 92464CAF1B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg */; };
 		92464CB21B94E773006727E7 /* UpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92464CB11B94E773006727E7 /* UpdateViewController.swift */; };
 		92464CB41B950CE9006727E7 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92464CB31B950CE9006727E7 /* WebViewController.swift */; };
 		92633AD01B939FBE00C4DADD /* Venue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92633ACF1B939FBE00C4DADD /* Venue.swift */; };
 		92633AD21B939FBF00C4DADD /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92633AD11B939FBF00C4DADD /* Event.swift */; };
 		92633AD41B93A1E000C4DADD /* ScheduleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92633AD31B93A1E000C4DADD /* ScheduleItem.swift */; };
+		92CFBB871B9CE6800066F323 /* Born_to_the_West_(1937).jpg in Resources */ = {isa = PBXBuildFile; fileRef = 92CFBB861B9CE6800066F323 /* Born_to_the_West_(1937).jpg */; };
+		92CFBB891B9CEA890066F323 /* Born_to_the_West_(1937)_Portrait.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 92CFBB881B9CEA890066F323 /* Born_to_the_West_(1937)_Portrait.jpg */; };
 		92E0D0141B74FDE9006B587F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0131B74FDE9006B587F /* AppDelegate.swift */; };
 		92E0D0171B74FDE9006B587F /* PTFilmFest.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0151B74FDE9006B587F /* PTFilmFest.xcdatamodeld */; };
 		92E0D0191B74FDE9006B587F /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0D0181B74FDE9006B587F /* MasterViewController.swift */; };
@@ -26,7 +27,6 @@
 		92E0D05D1B754AE3006B587F /* mapGlyph.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D05B1B754AE3006B587F /* mapGlyph.png */; };
 		92E0D05E1B754AE3006B587F /* mapGlyph@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */; };
 		92E0D0601B795855006B587F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92E0D05F1B795855006B587F /* MapKit.framework */; };
-		92FA13A81B97ABD1008B6B2C /* Images-2.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92FA13A71B97ABD1008B6B2C /* Images-2.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,13 +40,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		92464CAB1B94BF86006727E7 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		92464CAF1B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Born_to_the_West_(1937)_1.jpg"; sourceTree = "<group>"; };
 		92464CB11B94E773006727E7 /* UpdateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateViewController.swift; sourceTree = "<group>"; };
 		92464CB31B950CE9006727E7 /* WebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		92633ACF1B939FBE00C4DADD /* Venue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Venue.swift; sourceTree = "<group>"; };
 		92633AD11B939FBF00C4DADD /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		92633AD31B93A1E000C4DADD /* ScheduleItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleItem.swift; sourceTree = "<group>"; };
+		92CFBB861B9CE6800066F323 /* Born_to_the_West_(1937).jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Born_to_the_West_(1937).jpg"; sourceTree = "<group>"; };
+		92CFBB881B9CEA890066F323 /* Born_to_the_West_(1937)_Portrait.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Born_to_the_West_(1937)_Portrait.jpg"; sourceTree = "<group>"; };
 		92E0D00E1B74FDE9006B587F /* PTFilmFest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PTFilmFest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92E0D0121B74FDE9006B587F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		92E0D0131B74FDE9006B587F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -63,7 +64,6 @@
 		92E0D05B1B754AE3006B587F /* mapGlyph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mapGlyph.png; sourceTree = "<group>"; };
 		92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mapGlyph@2x.png"; sourceTree = "<group>"; };
 		92E0D05F1B795855006B587F /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		92FA13A71B97ABD1008B6B2C /* Images-2.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Images-2.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,13 +112,11 @@
 				92E0D01A1B74FDE9006B587F /* DetailViewController.swift */,
 				92464CB11B94E773006727E7 /* UpdateViewController.swift */,
 				92464CB31B950CE9006727E7 /* WebViewController.swift */,
-				92464CAB1B94BF86006727E7 /* DataSource.swift */,
 				92E0D0531B7503E5006B587F /* TableViewCell.swift */,
 				92E0D04C1B7503B1006B587F /* Model */,
 				92E0D0551B754A06006B587F /* Images */,
 				92E0D0151B74FDE9006B587F /* PTFilmFest.xcdatamodeld */,
 				92E0D01C1B74FDE9006B587F /* Main.storyboard */,
-				92FA13A71B97ABD1008B6B2C /* Images-2.xcassets */,
 				92E0D0111B74FDE9006B587F /* Supporting Files */,
 			);
 			path = PTFilmFest;
@@ -164,7 +162,9 @@
 		92E0D0551B754A06006B587F /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				92CFBB881B9CEA890066F323 /* Born_to_the_West_(1937)_Portrait.jpg */,
 				92464CAF1B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg */,
+				92CFBB861B9CE6800066F323 /* Born_to_the_West_(1937).jpg */,
 				92E0D05B1B754AE3006B587F /* mapGlyph.png */,
 				92E0D05C1B754AE3006B587F /* mapGlyph@2x.png */,
 			);
@@ -259,9 +259,10 @@
 			files = (
 				92464CB01B94E418006727E7 /* Born_to_the_West_(1937)_1.jpg in Resources */,
 				92E0D05D1B754AE3006B587F /* mapGlyph.png in Resources */,
-				92FA13A81B97ABD1008B6B2C /* Images-2.xcassets in Resources */,
+				92CFBB871B9CE6800066F323 /* Born_to_the_West_(1937).jpg in Resources */,
 				92E0D01E1B74FDE9006B587F /* Main.storyboard in Resources */,
 				92E0D05E1B754AE3006B587F /* mapGlyph@2x.png in Resources */,
+				92CFBB891B9CEA890066F323 /* Born_to_the_West_(1937)_Portrait.jpg in Resources */,
 				92E0D0231B74FDE9006B587F /* LaunchScreen.xib in Resources */,
 				92E0D0201B74FDE9006B587F /* Images.xcassets in Resources */,
 			);
@@ -288,7 +289,6 @@
 				92E0D0191B74FDE9006B587F /* MasterViewController.swift in Sources */,
 				92633AD21B939FBF00C4DADD /* Event.swift in Sources */,
 				92633AD01B939FBE00C4DADD /* Venue.swift in Sources */,
-				92464CAC1B94BF86006727E7 /* DataSource.swift in Sources */,
 				92E0D01B1B74FDE9006B587F /* DetailViewController.swift in Sources */,
 				92464CB41B950CE9006727E7 /* WebViewController.swift in Sources */,
 				92464CB21B94E773006727E7 /* UpdateViewController.swift in Sources */,
@@ -423,6 +423,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = PTFilmFest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -435,6 +436,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = PTFilmFest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

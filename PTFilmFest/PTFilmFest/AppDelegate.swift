@@ -30,29 +30,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         controller = masterNavigationController.topViewController as? MasterViewController
         controller?.managedObjectContext = self.managedObjectContext
         
-        //getToken()
-        
-        //getFestivalData()
-        
         return true
     }
     
-    func applicationWillResignActive(application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-    }
-
-    func applicationDidEnterBackground(application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    }
-
     func applicationWillEnterForeground(application: UIApplication) {
-        // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        NSNotificationCenter.defaultCenter().postNotificationName("checkForUpdates", object: nil)
     }
 
+    var dispatchToken: dispatch_once_t = 0
     func applicationDidBecomeActive(application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        // Location Manager causes this method to be called more than once, so...
+        dispatch_once(&dispatchToken) {
+            NSNotificationCenter.defaultCenter().postNotificationName("checkForUpdates", object: nil)
+        };
     }
 
     func applicationWillTerminate(application: UIApplication) {
@@ -136,59 +126,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         }
     }
     
-    // MARK: database creation
+    // MARK: database management functions
     
+    func updateLike(event: Event) {
+        let context = self.managedObjectContext!;
+        
+        var fetchRequest = NSFetchRequest(entityName: "Event")
+        fetchRequest.predicate = NSPredicate(format: "name CONTAINS[c] %@", event.name)
+        
+        let fetchResults = context.executeFetchRequest(fetchRequest, error: nil) as? [Event]
+        if fetchResults?.count  > 0 {
+            fetchResults![0].like = event.like;
+            saveContext()
+        }
+    }
     
-    func getToken() {
-        var deviceId = UIDevice.currentDevice().identifierForVendor.UUIDString
-        println("deviceId = \(deviceId)")
+    func deleteAllItems(entityName: String) {
+        let context = self.managedObjectContext!;
+        let fetchRequest = NSFetchRequest()
+        fetchRequest.entity = NSEntityDescription.entityForName(entityName, inManagedObjectContext: context)
+        fetchRequest.includesPropertyValues = false
         
-        let body = [
-            "bundleId": "org.steveschauer.ptfilmfest",
-            "deviceId": deviceId
-        ]
-        
-        var err: NSError?
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://api.ptffportal.org/v0/ss/tokens")!)
-        request.HTTPMethod = "POST"
-        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(body, options: nil, error: &err)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
-            if let dictionary = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary {
-                self.token = dictionary["token"] as? String
+        var error:NSError?
+        if let results = context.executeFetchRequest(fetchRequest, error: &error) as? [NSManagedObject] {
+            for result in results {
+                context.deleteObject(result)
             }
-        })
-        task.resume()
-    }
-    
-    func getTimeStamp() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        let currentTimeStamp = defaults.doubleForKey("timeStamp")
-        var newTimeStamp:Double = 0
-        
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://api.ptffportal.org/v0/ss/timestamp")!)
-        request.setValue("Bearer " + self.token!, forHTTPHeaderField: "Authorization")
-        let session = NSURLSession.sharedSession()
-        let timeStampTask = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
             
-            var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
+            var error:NSError?
+            if !context.save(&error) {
+                if let error = error {
+                    println(error.userInfo)
+                }
+            }
             
-            newTimeStamp = (result?["timestamp"] as? Double)!
-            defaults.setDouble(newTimeStamp, forKey: "timeStamp")
-        })
-        
-        timeStampTask.resume()
+        } else if let error = error {
+            println("error: \(error)")
+        }
     }
-    
-    
-    
     
     func getFestivalData() {
         var deviceId = UIDevice.currentDevice().identifierForVendor.UUIDString
-        println("deviceId = \(deviceId)")
         
         let body = [
             "bundleId": "org.steveschauer.ptfilmfest",
@@ -206,7 +184,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
             if let dictionary = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary {
                 self.token = dictionary["token"] as? String
-                
                 
                 if let token = self.token {
                     
@@ -246,28 +223,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                                 // stop fetchedResultsController updates while we are working
                                 self.controller!.suspendUpdates = true
                                 
+                                // get rid of the current data
+                                self.deleteAllItems("ScheduleItem")
+                                self.deleteAllItems("Event")
+                                self.deleteAllItems("Venue")
+                                
                                 if let venues = result!["festival"]!["theatres"] as? Dictionary<String,Dictionary<String,String>> {
                                     self.parseVenues(venues)
+                                    self.saveContext()
                                 }
                                 
                                 if let events = result!["festival"]!["films"] as? Dictionary<String,Dictionary<String,String>> {
                                     self.parseEvents(events)
+                                    self.saveContext()
                                 }
                                 
                                 if let scheduleItems = result!["festival"]!["festivalDays"] as? Array<Dictionary<String,AnyObject>> {
                                     self.parseScheduleItems(scheduleItems)
+                                    self.saveContext()
                                 }
                                 
                                 self.controller!.suspendUpdates = false
                                 
-                                NSNotificationCenter.defaultCenter().postNotificationName("updateFestivalDataComplete", object: nil)
-                                self.saveContext()
+                                NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
                                 self.didUpdateFestivalData = true
+
                             })
                             
                             dataTask.resume()
                             
-                        } // if newTimeStamp > currentTimeStamp
+                        } else {
+                            NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
+                        }
                     })
                     
                     timeStampTask.resume()
@@ -379,4 +366,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         }
     }
     
-}  // end
+}
