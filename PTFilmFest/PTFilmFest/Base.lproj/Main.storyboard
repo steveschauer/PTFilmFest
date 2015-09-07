@@ -58,7 +58,7 @@
                                     <action selector="showMap:" destination="JEX-9P-axG" eventType="touchUpInside" id="V1D-j2-gRL"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" misplaced="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" translatesAutoresizingMaskIntoConstraints="NO" id="5bb-sb-GD3">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" text=" " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" translatesAutoresizingMaskIntoConstraints="NO" id="5bb-sb-GD3">
                                 <rect key="frame" x="16" y="458" width="520" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="520" id="bCT-FT-iqJ"/>
@@ -70,7 +70,7 @@
                                     <rect key="frame" x="16" y="358" width="568" height="10"/>
                                 </variation>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qdV-fF-F8M">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qdV-fF-F8M">
                                 <rect key="frame" x="16" y="482" width="568" height="14"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -79,7 +79,7 @@
                                     <rect key="frame" x="16" y="376" width="466" height="0.0"/>
                                 </variation>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="253" verticalCompressionResistancePriority="749" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g6-Yg-VYq">
+                            <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="253" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g6-Yg-VYq">
                                 <rect key="frame" x="16" y="493" width="94" height="30"/>
                                 <state key="normal" title="On the Web...">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -88,7 +88,7 @@
                                     <segue destination="soZ-OE-J21" kind="show" identifier="showWebView" id="NQN-oi-pQo"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sme-35-9Xh">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sme-35-9Xh">
                                 <rect key="frame" x="16" y="520" width="568" height="72"/>
                                 <color key="backgroundColor" red="0.97647058823529409" green="0.97647058823529409" blue="0.95294117647058818" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -113,11 +113,11 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="9pj-7b-PJC" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" constant="-18" id="6dk-67-hI4"/>
+                            <constraint firstItem="0g6-Yg-VYq" firstAttribute="top" secondItem="qdV-fF-F8M" secondAttribute="bottom" constant="-3" id="8lA-3A-Hch"/>
                             <constraint firstItem="QMf-gP-2qo" firstAttribute="trailing" secondItem="svH-Pt-448" secondAttribute="trailingMargin" id="C3c-8r-761"/>
                             <constraint firstAttribute="trailingMargin" secondItem="ieN-YB-Ktz" secondAttribute="trailing" constant="-2" id="CmP-CW-MPx"/>
                             <constraint firstItem="Sme-35-9Xh" firstAttribute="trailing" secondItem="svH-Pt-448" secondAttribute="trailingMargin" id="Cy7-rh-16u"/>
                             <constraint firstAttribute="trailingMargin" secondItem="9pj-7b-PJC" secondAttribute="trailing" constant="-18" id="Gs4-Dh-U20"/>
-                            <constraint firstItem="0g6-Yg-VYq" firstAttribute="top" secondItem="qdV-fF-F8M" secondAttribute="bottom" constant="-3" id="Ivv-uC-g1V"/>
                             <constraint firstItem="5bb-sb-GD3" firstAttribute="top" secondItem="DnJ-nf-quM" secondAttribute="bottom" constant="2" id="JUe-yu-wXf"/>
                             <constraint firstItem="0g6-Yg-VYq" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="Kq3-Md-kgm"/>
                             <constraint firstItem="QMf-gP-2qo" firstAttribute="leading" secondItem="DnJ-nf-quM" secondAttribute="trailing" constant="8" id="MN1-QT-iSt"/>

@@ -228,7 +228,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                                 self.deleteAllItems("Event")
                                 self.deleteAllItems("Venue")
                                 
-                                if let venues = result!["festival"]!["theatres"] as? Dictionary<String,Dictionary<String,String>> {
+                                if let venues = result!["festival"]!["theatres"] as? Dictionary<String,Dictionary<String,AnyObject>> {
                                     self.parseVenues(venues)
                                     self.saveContext()
                                 }
@@ -265,14 +265,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         task.resume()
     }
     
-    func parseVenues(venueData:Dictionary<String,Dictionary<String,String>>) {
+    func parseVenues(venueData:Dictionary<String,Dictionary<String,AnyObject>>) {
         let context = self.managedObjectContext!;
         
         for (name,details) in venueData {
             var venue = NSEntityDescription.insertNewObjectForEntityForName("Venue", inManagedObjectContext: context) as! Venue
             venue.name = name
-            venue.address = details["address"]!
-            venue.title = details["name"]!
+            venue.address = details["address"] as! String
+            venue.title = details["name"] as! String
             var geocoder = CLGeocoder()
             geocoder.geocodeAddressString("\(venue.address), Port Townsend, WA, USA", completionHandler: {(placemarks: [AnyObject]!, error: NSError!) -> Void in
                 if let placemark = placemarks?[0] as? CLPlacemark {

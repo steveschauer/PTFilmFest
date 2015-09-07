@@ -81,13 +81,17 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
                 tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
             }
             
-            let object = fetchedResultsController.objectAtIndexPath(indexPath!) as! ScheduleItem
             let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
-            controller.item = object
+            if (fetchedResultsController.fetchedObjects!.count > 0) {
+                let object = fetchedResultsController.objectAtIndexPath(indexPath!) as! ScheduleItem
+                controller.item = object
+            }
+            
             controller.masterVC = self
             controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem()
             controller.navigationItem.leftItemsSupplementBackButton = true
             title = ""
+            
         }
     }
     

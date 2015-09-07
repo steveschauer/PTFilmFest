@@ -30,6 +30,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     var locationManager: CLLocationManager? = nil
     var fullMapRect: CGRect? = nil
+    var shouldUpdateTableViewOnExit = false
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var dateAndTimeLabel: UILabel!
@@ -53,7 +54,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             }
             let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             appDelegate.updateLike(event)
-            NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
+            shouldUpdateTableViewOnExit = true
         }
         
     }
@@ -63,6 +64,16 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBarHidden = false
+        
+        //navigationController?.interactivePopGestureRecognizer.enabled = false;
+        
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: "handleSwipeLeft:")
+        swipeLeft.direction = .Left
+        view.addGestureRecognizer(swipeLeft)
+        
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: "handleSwipeRight:")
+        swipeRight.direction = .Right
+        view.addGestureRecognizer(swipeRight)
         
         mapView.hidden = true
         configureView()
@@ -76,15 +87,15 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        var swipeLeft = UISwipeGestureRecognizer(target: self, action: "handleSwipeLeft:")
-        swipeLeft.direction = .Left
-        view.addGestureRecognizer(swipeLeft)
-        
-        var swipeRight = UISwipeGestureRecognizer(target: self, action: "handleSwipeRight:")
-        swipeRight.direction = .Right
-        view.addGestureRecognizer(swipeRight)
-        
         fullMapRect = mapView.frame
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        if UIDevice.currentDevice().userInterfaceIdiom != .Pad && shouldUpdateTableViewOnExit {
+            NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
+            shouldUpdateTableViewOnExit = false
+        }
     }
     
     func configureView() {
