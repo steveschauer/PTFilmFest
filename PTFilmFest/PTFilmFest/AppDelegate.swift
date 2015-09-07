@@ -126,7 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         }
     }
     
-    // MARK: database management functions
+    // MARK: - Database management functions
     
     func updateLike(event: Event) {
         let context = self.managedObjectContext!;

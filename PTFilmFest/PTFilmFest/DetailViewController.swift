@@ -59,7 +59,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
     }
     
-    // MARK: View Life Cycle
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,8 +108,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             bodyTextView.layer.borderWidth=1.0
             bodyTextView.layer.borderColor=UIColor.lightGrayColor().CGColor
             bodyTextView.layer.cornerRadius = 4.0
-            bodyTextView.textContainerInset = UIEdgeInsetsMake(12.0, 12.0, 12.0, 12.0)
-            
+            bodyTextView.textContainerInset = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0)
             
             venueNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
             venueNameButton.setTitle(venue.title, forState: UIControlState.Normal)
@@ -126,8 +125,6 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             
             bodyTextView.text = event.bodyText
             
-           // likeButton.imageView!.image = event.like == true ? UIImage(named: "heart-full") : UIImage(named: "heart-empty")
-
             if (event.like == true) {
                 let image = UIImage(named: "heart-full.png") as UIImage!
                 likeButton.setBackgroundImage(image, forState: UIControlState.Normal)
@@ -135,6 +132,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 let image = UIImage(named: "heart-empty.png") as UIImage!
                 likeButton.setBackgroundImage(image, forState: UIControlState.Normal)
             }
+            
             
         }
     }
@@ -163,6 +161,37 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     
+    // MARK: - Gesture recognizers
+    
+    func handleSwipeLeft(sender: UISwipeGestureRecognizer) {
+        handleSwipeGesture(true)
+    }
+    
+    func handleSwipeRight(sender: UISwipeGestureRecognizer) {
+        handleSwipeGesture(false)
+    }
+    
+    func handleSwipeGesture(forward: Bool) {
+        if let newItem = masterVC?.moveToAdjacentItem(item, forward: forward) {
+            self.item = newItem
+            self.configureView()
+            self.view.alpha = 1.0
+        }
+    }
+    
+    func handleTapGesture(sender: UITapGestureRecognizer) {
+        // animate mapView unZoom
+        view.removeGestureRecognizer(sender)
+        let endRect = mapButton.frame
+        UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            self.mapView.frame = endRect
+            }, completion:
+            {
+                (value: Bool) in
+                self.mapView.hidden = true
+        })
+    }
+    
     // MARK: Map Functions
 
     func locationManager(manager: CLLocationManager,
@@ -177,52 +206,6 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             println(error)
     }
 
-    func handleSwipeLeft(sender: UISwipeGestureRecognizer) {
-        handleSwipeGesture(true)
-    }
-
-    func handleSwipeRight(sender: UISwipeGestureRecognizer) {
-        handleSwipeGesture(false)
-    }
-    func handleSwipeGesture(forward: Bool) {
-        if let newItem = masterVC?.moveToAdjacentItem(item, forward: forward) {
-//            view.alpha = 0.5
-//            UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
-//                view.alpha = 0.5
-//                self.item = newItem
-//                }, completion: {
-//                self.configureView()
-//                self.view.alpha = 1.0
-            //        })
-            
-//            view.alpha = 0.25
-//            UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveLinear, animations: {
-                self.item = newItem
-                self.configureView()
-                self.view.alpha = 1.0
-//                }, completion:
-//                {
-//                    (value: Bool) in
-//                   // self.view.alpha = 1.0
-//            })
-            
-        }
-    }
-
-    func handleTapGesture(sender: UITapGestureRecognizer) {
-        // animate mapView unZoom
-        view.removeGestureRecognizer(sender)
-        let endRect = mapButton.frame
-        UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-            self.mapView.frame = endRect
-            }, completion:
-            {
-                (value: Bool) in
-                self.mapView.hidden = true
-            })
-        
-    }
-    
     @IBAction func showMap(sender: UIButton) {
         // animate mapView zoom
         configureMapView()

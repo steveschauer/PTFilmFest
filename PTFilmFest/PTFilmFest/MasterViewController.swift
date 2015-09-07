@@ -15,6 +15,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     var managedObjectContext: NSManagedObjectContext? = nil
     var suspendUpdates = false
 
+    // MARK: - Lifecycle
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -25,13 +26,17 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBarHidden = true
         
         title = "PTFilmFest"
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
         }
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBarHidden = true
     }
     
     func checkForUpdates(notification:NSNotification) {
@@ -187,7 +192,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     func moveToAdjacentItem(item: ScheduleItem?, forward: Bool) -> ScheduleItem? {
         if let indexPath = tableView.indexPathForSelectedRow() {
             
-            var newIndexPath:NSIndexPath = indexPath  // assignment is to keep the compiler quiet only
+            var newIndexPath:NSIndexPath?
 
             var sectionCount = tableView.numberOfSections()
             var rowsInSection = tableView.numberOfRowsInSection(indexPath.section)
@@ -215,7 +220,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
                 }
             }
             
-            if let currentItem = fetchedResultsController.objectAtIndexPath(newIndexPath) as? ScheduleItem {
+            if let currentItem = fetchedResultsController.objectAtIndexPath(newIndexPath!) as? ScheduleItem {
                 tableView.selectRowAtIndexPath(newIndexPath, animated: true, scrollPosition: UITableViewScrollPosition.None)
                 return currentItem
             }

@@ -14,6 +14,8 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     var webView: WKWebView!
     var urlString: String!
     
+    // MARK: - Lifecycle
+    
     override func loadView() {
         webView = WKWebView()
         webView.navigationDelegate = self

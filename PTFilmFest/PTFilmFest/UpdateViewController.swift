@@ -34,6 +34,8 @@ class UpdateViewController: UIViewController {
         }
     }
     
+    // MARK: - Lifecycle
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -61,7 +63,6 @@ class UpdateViewController: UIViewController {
     }
     
     func updateCompleted(notification: NSNotification) {
-        
         // make the view stay up for a minimum amount of time
         var now = NSDate()
         var elapsedTime = now.timeIntervalSinceDate(startTime!)
