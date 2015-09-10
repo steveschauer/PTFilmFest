@@ -65,8 +65,6 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         super.viewDidLoad()
         navigationController?.navigationBarHidden = false
         
-        //navigationController?.interactivePopGestureRecognizer.enabled = false;
-        
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: "handleSwipeLeft:")
         swipeLeft.direction = .Left
         view.addGestureRecognizer(swipeLeft)

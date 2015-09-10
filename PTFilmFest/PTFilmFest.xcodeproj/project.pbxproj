@@ -48,7 +48,7 @@
 		92633AD31B93A1E000C4DADD /* ScheduleItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleItem.swift; sourceTree = "<group>"; };
 		92CFBB861B9CE6800066F323 /* Born_to_the_West_(1937).jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Born_to_the_West_(1937).jpg"; sourceTree = "<group>"; };
 		92CFBB881B9CEA890066F323 /* Born_to_the_West_(1937)_Portrait.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Born_to_the_West_(1937)_Portrait.jpg"; sourceTree = "<group>"; };
-		92E0D00E1B74FDE9006B587F /* PTFilmFest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PTFilmFest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		92E0D00E1B74FDE9006B587F /* ptfilmfest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ptfilmfest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92E0D0121B74FDE9006B587F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		92E0D0131B74FDE9006B587F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		92E0D0161B74FDE9006B587F /* PTFilmFest.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PTFilmFest.xcdatamodel; sourceTree = "<group>"; };
@@ -98,7 +98,7 @@
 		92E0D00F1B74FDE9006B587F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				92E0D00E1B74FDE9006B587F /* PTFilmFest.app */,
+				92E0D00E1B74FDE9006B587F /* ptfilmfest.app */,
 				92E0D0281B74FDE9006B587F /* PTFilmFestTests.xctest */,
 			);
 			name = Products;
@@ -188,7 +188,7 @@
 			);
 			name = PTFilmFest;
 			productName = PTFilmFest;
-			productReference = 92E0D00E1B74FDE9006B587F /* PTFilmFest.app */;
+			productReference = 92E0D00E1B74FDE9006B587F /* ptfilmfest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		92E0D0271B74FDE9006B587F /* PTFilmFestTests */ = {
@@ -422,10 +422,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = PTFilmFest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ptfilmfest;
+				PROVISIONING_PROFILE = "7f043490-c28b-47fd-98f5-64e089fd6e15";
 			};
 			name = Debug;
 		};
@@ -434,11 +436,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				INFOPLIST_FILE = PTFilmFest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ptfilmfest;
+				PROVISIONING_PROFILE = "7f043490-c28b-47fd-98f5-64e089fd6e15";
 			};
 			name = Release;
 		};

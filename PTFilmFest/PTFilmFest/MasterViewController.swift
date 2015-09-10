@@ -146,7 +146,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let imageHeight =  9/16 * view.frame.size.width //UIScreen.mainScreen().bounds.size.width
+        let imageHeight =  9/16 * view.frame.size.width
         return imageHeight
     }
 
@@ -171,22 +171,14 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         dateFormatter.dateFormat = "h:mm a"
         let dateString = dateFormatter.stringFromDate(item.date)
         
-        if let event = item.event {
-            let venue = item.venue
+        if let event = item.event, let venue = item.venue {
             
-            cell.imageViewForCell.image = UIImage(data: event.imageData)//UIImage(named:"\(item.event.name)_small")
+            cell.imageViewForCell.image = UIImage(data: event.imageData)
             cell.eventTitleLabel.text = event.title
-            cell.timeAndVenueLabel.text = "\(dateString) \(venue!.title)"
+            cell.timeAndVenueLabel.text = "\(dateString) \(venue.title)"
             
             cell.likeImageView.image = event.like == true ? UIImage(named: "heart-full") : UIImage(named: "heart-empty")
-//            if (event.like == true) {
-//                let image = UIImage(named: "heart-full.png") as UIImage!
-//                cell.likeImageView.setImage(image, forState: UIControlState.Normal)
-//            } else {
-//                cell.likeImageView.image = UIImage(named:"heart-empty")
-//            }
         }
-        
     }
     
     func moveToAdjacentItem(item: ScheduleItem?, forward: Bool) -> ScheduleItem? {
