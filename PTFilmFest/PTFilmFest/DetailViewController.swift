@@ -32,6 +32,8 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     var fullMapRect: CGRect? = nil
     var shouldUpdateTableViewOnExit = false
     
+    var pushAnimationEffect = CATransition()
+    
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var dateAndTimeLabel: UILabel!
     @IBOutlet weak var eventDetailsLabel: UILabel!
@@ -73,6 +75,10 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         swipeRight.direction = .Right
         view.addGestureRecognizer(swipeRight)
         
+        pushAnimationEffect.duration = 0.4
+        pushAnimationEffect.type = kCATransitionMoveIn
+        pushAnimationEffect.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+
         mapView.hidden = true
         configureView()
     }
@@ -162,18 +168,20 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     // MARK: - Gesture recognizers
     
     func handleSwipeLeft(sender: UISwipeGestureRecognizer) {
+        pushAnimationEffect.subtype = kCATransitionFromRight
         handleSwipeGesture(true)
     }
     
     func handleSwipeRight(sender: UISwipeGestureRecognizer) {
+        pushAnimationEffect.subtype = kCATransitionFromLeft
         handleSwipeGesture(false)
     }
     
     func handleSwipeGesture(forward: Bool) {
         if let newItem = masterVC?.moveToAdjacentItem(item, forward: forward) {
+            self.view.layer.addAnimation(pushAnimationEffect, forKey: nil)
             self.item = newItem
             self.configureView()
-            self.view.alpha = 1.0
         }
     }
     
