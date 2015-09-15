@@ -40,7 +40,6 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
     
     func checkForUpdates(notification:NSNotification) {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let defaults = NSUserDefaults.standardUserDefaults()
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
@@ -63,7 +62,6 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
             performSegueWithIdentifier("showDetail", sender: self)
         }
         
-        defaults.setObject(dateFormatter.stringFromDate(now), forKey:"lastCheckedString")
     }
     
     func updateTableView(notification: NSNotification) {

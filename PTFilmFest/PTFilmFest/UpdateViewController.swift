@@ -40,9 +40,9 @@ class UpdateViewController: UIViewController {
         super.viewWillAppear(animated)
         
         startTime = NSDate()
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         activityView.startAnimating()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateCompleted:", name:"updateTableView", object: nil)
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.getFestivalData()
     }
 
@@ -63,20 +63,34 @@ class UpdateViewController: UIViewController {
     }
     
     func updateCompleted(notification: NSNotification) {
-        // make the view stay up for a minimum amount of time
-        var now = NSDate()
-        var elapsedTime = now.timeIntervalSinceDate(startTime!)
-        if elapsedTime < 3 {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(3 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-                self.activityView.stopAnimating()
-                NSNotificationCenter.defaultCenter().removeObserver(self)
-                self.dismissViewControllerAnimated(true, completion: nil)
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        if appDelegate.didGetData() == false {
+            let alertController = UIAlertController(title: "Network connection failed", message: "An error occurred while retrieving initial festival data.\n\nPlease check your internet connection and try again.", preferredStyle: .Alert)
+            let OKAction = UIAlertAction(title: "OK", style: .Default) { (action:UIAlertAction!) in
+                abort()
             }
+            alertController.addAction(OKAction)
+            self.presentViewController(alertController, animated: true, completion:nil)
         } else {
-            self.activityView.stopAnimating()
-            NSNotificationCenter.defaultCenter().removeObserver(self)
-            self.dismissViewControllerAnimated(true, completion: nil)
+            let defaults = NSUserDefaults.standardUserDefaults()
+            let now = NSDate()
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
+            defaults.setObject(dateFormatter.stringFromDate(now), forKey:"lastCheckedString")
+            
+            // make the view stay up for a minimum amount of time
+            var elapsedTime = now.timeIntervalSinceDate(startTime!)
+            if elapsedTime < 3 {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(3 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+                    self.activityView.stopAnimating()
+                }
+            } else {
+                self.activityView.stopAnimating()
+            }
         }
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
+    
     
 }

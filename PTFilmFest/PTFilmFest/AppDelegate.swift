@@ -128,6 +128,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     // MARK: - Database management functions
     
+    func didGetData() -> Bool {
+        
+        var gotData = false
+        
+        let context = self.managedObjectContext!;
+        let fetchRequest = NSFetchRequest()
+        fetchRequest.entity = NSEntityDescription.entityForName("ScheduleItem", inManagedObjectContext: context)
+        fetchRequest.includesPropertyValues = false
+        
+        var error:NSError?
+        if let results = context.executeFetchRequest(fetchRequest, error: &error) as? [NSManagedObject] {
+            gotData = results.count > 0
+        }
+        return gotData
+    }
+    
     func updateLike(event: Event) {
         let context = self.managedObjectContext!;
         
@@ -211,11 +227,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                                 if let httpResponse = response as? NSHTTPURLResponse {
                                     if httpResponse.statusCode != 200 {
                                         println("response was not 200: \(response)")
+                                        NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
                                         return
                                     }
                                 }
                                 if (error != nil) {
                                     println("error submitting request: \(error)")
+                                    NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
                                     return
                                 }
                                 var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary
@@ -255,11 +273,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                         } else {
                             NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
                         }
-                    })
+                    }) 
                     
                     timeStampTask.resume()
                     
-                } // if let token = token
+                } else {
+                    NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
+                }
+            } else {
+                NSNotificationCenter.defaultCenter().postNotificationName("updateTableView", object: nil)
             }
         })
         task.resume()
